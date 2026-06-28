@@ -6,7 +6,7 @@ import type { AgentInput } from './input'
 // `makeAnalysis` decision tree. No network, fully reproducible — the offline
 // engine and the baseline the LLM engine is compared against.
 
-interface RawAnalysis {
+export interface RawAnalysis {
   analyst: string
   debate: DebateTurn[]
   signal: string
@@ -19,7 +19,9 @@ interface RawAnalysis {
   risks: string[]
 }
 
-function analyze(m: AgentInput): RawAnalysis {
+// Verbatim port of the prototype's makeAnalysis. Returns the prototype-shaped
+// analysis (used both by the deterministic verdict and the terminal UI).
+export function prototypeAnalysis(m: AgentInput): RawAnalysis {
   const yp = Math.round(m.yesAvg * 100)
   const chg = Math.round(m.chg)
   const absChg = Math.abs(chg)
@@ -93,7 +95,7 @@ function toDirection(signalEn: string): Direction {
 }
 
 export function deterministicVerdict(input: AgentInput): AgentVerdict {
-  const a = analyze(input)
+  const a = prototypeAnalysis(input)
   const bullCase = a.debate.filter((d) => d.side === 'bull').map((d) => d.text).join(' ')
   const bearCase = a.debate.filter((d) => d.side === 'bear').map((d) => d.text).join(' ')
   return {
