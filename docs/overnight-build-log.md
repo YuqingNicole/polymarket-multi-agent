@@ -70,12 +70,23 @@ npm run dev                        # 打开 http://localhost:3000
 node docs/prototype/shoot.mjs both # 重新生成对比截图(需先 npx playwright install chromium)
 ```
 
-## 6. 我未做 / 留给你定的(诚实记录)
-- **UI 与后端 API 的"实时联动"**:为确保 100% 还原,默认 UI 跑的是客户端原型逻辑(与后端同一份种子数据,
-  结果一致)。后端 API(含真实 LLM)已独立可用并验证。把 UI 的"运行 Agent 分析"接到 `/api/agent` 是
-  推荐的下一步集成,后端已就绪。⚠️ 若你希望我现在就接通,告诉我。
-- **live 模式**:真实 Polymarket WS + Kalshi 轮询代码已实现并配 fixture 单测,但沙箱内未长连真实交易所
-  压测;`DATA_SOURCE=live` 可切换。
+## 6. UI ↔ API 实时联动(已完成 ✅,第二轮)
+
+按你的要求接通了前后端,且**保真零回归**(Playwright 截图复核四屏仍逐像素一致):
+- **数据源**:UI 不再用客户端常量,改为 `GET /api/markets`。该接口在 seed 模式**逐字返回原型数据**
+  (`PrototypeMarket[]`,含 hist/flags),live 模式从库计算同形状 → 渲染逻辑一行没改,故保真不变。
+- **真实 Agent**:详情页"运行 Agent 分析"现在 `POST /api/agent/poly/<id>`,跑真实流水线(默认 deterministic,
+  `AGENT_ENGINE=llm` 即走 OpenRouter),结果渲染进决策卡 + 多空辩论;网络失败回退确定性。
+- **实时通道**:`GET /api/stream`(SSE)已连,tick/signals 事件触发看板刷新。
+- **一个保真修正**:后端 Agent 的"簿深"原本用 `vol24×0.5` 近似(显示 $1.4M),与原型 $2.1M 不符;
+  已在 seed 模式改用原型授权的真实流动性 → 现在 $2.1M 一致。
+- 验证:Playwright 实测点击触发 `GET /api/markets`、`GET /api/stream`、`POST /api/agent/poly/poly-fed-jul`,
+  控制台零错误;`tsc` 干净;56 单测全绿。
+
+## 7. 仍留白 / 你可定夺(诚实记录)
+- **live 模式压测**:真实 Polymarket WS + Kalshi 轮询代码已实现并配 fixture 单测,但沙箱内未长连真实交易所
+  压测;`DATA_SOURCE=live` 可切换试。
+- **流动性持久化**:seed 模式 liq 用原型授权值(已保真);更"正确"的做法是把 book depth 落进 ticks(留作后续)。
 - **依赖告警**:`npm install` 报了几个传递依赖的 audit 告警(主要来自 Next 工具链),未处理,非阻塞。
 
 ## 5. 待你决定 / 可能调整(早上看这里)

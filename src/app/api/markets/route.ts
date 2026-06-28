@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import { getBoard } from '@/lib/board'
+import { getMarketViews } from '@/lib/board'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  return NextResponse.json(await getBoard())
+  return NextResponse.json({ markets: await getMarketViews() })
 }

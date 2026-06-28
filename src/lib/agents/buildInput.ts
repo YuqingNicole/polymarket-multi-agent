@@ -1,7 +1,12 @@
 import type { Source } from '@/lib/types'
+import { config } from '@/lib/config'
 import { getHistory, getMarket, getPairs } from '@/lib/store'
 import { probDelta, volumeChangePct } from '@/lib/analysis/probTracker'
+import { PROTOTYPE_BASE } from '@/lib/seed/prototype'
 import type { AgentInput } from './input'
+
+// Authored per-event liquidity, used in seed mode (ticks don't carry book depth).
+const SEED_LIQ = new Map(PROTOTYPE_BASE.map((m) => [m.id, m.liq]))
 
 // Builds the merged cross-platform AgentInput for a market straight from the
 // store. If the market is paired, both venues are merged; otherwise the single
@@ -37,9 +42,13 @@ export async function buildAgentInput(source: Source, marketId: string): Promise
 
   const vol24 = (polyLatest?.volume24h ?? 0) + (kalshiLatest?.volume24h ?? 0)
   const vol = (polyLatest?.volumeTotal ?? 0) + (kalshiLatest?.volumeTotal ?? 0)
-  // Liquidity is not carried on ticks; approximate from 24h volume for the
-  // descriptive text. (Live data can later persist book depth explicitly.)
-  const liq = Math.round(vol24 * 0.5)
+  // Liquidity is not carried on ticks. In seed mode use the authored figure
+  // (keeps agent text identical to the prototype); otherwise approximate.
+  const seedKey = marketId.replace(/^(poly|kalshi)-/, '')
+  const liq =
+    config.DATA_SOURCE === 'seed' && SEED_LIQ.has(seedKey)
+      ? SEED_LIQ.get(seedKey)!
+      : Math.round(vol24 * 0.5)
 
   return {
     marketId,

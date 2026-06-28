@@ -6,9 +6,12 @@ import {
   pct,
   type PrototypeMarket,
 } from '@/lib/seed/prototype'
-import { prototypeAnalysis, type RawAnalysis } from '@/lib/agents/deterministic'
+import { deterministicVerdict, prototypeAnalysis, type RawAnalysis } from '@/lib/agents/deterministic'
 import type { AgentInput } from '@/lib/agents/input'
+import type { AgentVerdict } from '@/lib/types'
+import type { MarketView } from '@/lib/board'
 import type { Scope } from './Dc'
+import { fetchMarkets, runAgentApi, subscribeStream } from './api'
 
 // Faithful React port of the prototype's Component (renderVals + state +
 // charts + handlers). Produces the scope the Dc renderer binds the original
@@ -41,6 +44,22 @@ function protoToInput(m: PrototypeMarket): AgentInput {
     vol: m.vol,
     liq: m.liq,
     volChg: m.volChg,
+  }
+}
+
+// Map a backend AgentVerdict onto the prototype-shaped analysis the UI renders.
+function verdictToAnalysis(v: AgentVerdict): RawAnalysis {
+  return {
+    analyst: v.analyst,
+    debate: v.debate,
+    signal: v.signal,
+    signalEn: v.signalEn,
+    colorVar: v.colorVar,
+    confidence: Math.round(v.confidence * 100),
+    side: v.side,
+    size: v.sizeLabel,
+    reasons: v.reasons,
+    risks: v.risks,
   }
 }
 
@@ -121,9 +140,15 @@ const INITIAL: TermState = {
 
 export function useTerminal(): Scope {
   const [st, setSt] = useState<TermState>(INITIAL)
-  const dataRef = useRef<{ markets: PrototypeMarket[] }>({ markets: buildPrototypeMarkets() })
+  // First-paint fallback so the UI renders before the API responds (and if the
+  // backend is unreachable). Once /api/markets resolves, the live data wins.
+  const fallbackRef = useRef<MarketView[]>(
+    buildPrototypeMarkets().map((m) => ({ ...m, polyMarketId: `poly-${m.id}`, source: 'poly' as const })),
+  )
+  const [apiMarkets, setApiMarkets] = useState<MarketView[] | null>(null)
+  const [verdict, setVerdict] = useState<{ id: string; v: AgentVerdict } | null>(null)
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
-  const data = dataRef.current
+  const data = { markets: apiMarkets && apiMarkets.length ? apiMarkets : fallbackRef.current }
 
   const set = useCallback((patch: Partial<TermState> | ((s: TermState) => Partial<TermState>)) => {
     setSt((s) => ({ ...s, ...(typeof patch === 'function' ? patch(s) : patch) }))
@@ -134,6 +159,15 @@ export function useTerminal(): Scope {
   }, [st.theme])
   useEffect(() => () => timersRef.current.forEach(clearTimeout), [])
 
+  // Pull live data from the backend and refresh on SSE tick/signal events.
+  useEffect(() => {
+    let alive = true
+    const load = () => fetchMarkets().then((m) => { if (alive) setApiMarkets(m) }).catch(() => {})
+    load()
+    const unsub = subscribeStream(load)
+    return () => { alive = false; unsub() }
+  }, [])
+
   // ---- handlers ----
   const go = useCallback((screen: TermState['screen']) => set({ screen }), [set])
   const selectMarket = useCallback(
@@ -142,14 +176,23 @@ export function useTerminal(): Scope {
   )
   const openAgent = useCallback((id: string) => set({ screen: 'agent', selectedId: id }), [set])
 
-  const runAgent = useCallback(() => {
+  const runAgent = async () => {
     if (st.agentRunning) return
     timersRef.current.forEach(clearTimeout)
     timersRef.current = []
-    const m = data.markets.find((x) => x.id === st.selectedId)!
-    const an = prototypeAnalysis(protoToInput(m))
-    const total = an.debate.length
+    const m = data.markets.find((x) => x.id === st.selectedId) ?? data.markets[0]
+    if (!m) return
     set({ agentRunning: true, agentStep: 1, revealed: 0 })
+    // Call the real backend pipeline (respects AGENT_ENGINE); fall back to the
+    // deterministic verdict if the network call fails.
+    let v: AgentVerdict
+    try {
+      v = await runAgentApi('poly', m.polyMarketId)
+    } catch {
+      v = deterministicVerdict(protoToInput(m))
+    }
+    setVerdict({ id: m.id, v })
+    const total = v.debate.length
     ;[2, 3].forEach((s, i) => timersRef.current.push(setTimeout(() => set({ agentStep: s }), 350 * (i + 1))))
     for (let k = 1; k <= total; k++) {
       timersRef.current.push(setTimeout(() => set({ revealed: k, agentStep: 3 }), 700 + k * 620))
@@ -157,7 +200,7 @@ export function useTerminal(): Scope {
     timersRef.current.push(setTimeout(() => set({ agentStep: 4 }), 700 + total * 620 + 200))
     timersRef.current.push(setTimeout(() => set({ agentStep: 5 }), 700 + total * 620 + 500))
     timersRef.current.push(setTimeout(() => set({ agentRunning: false, agentStep: 6 }), 700 + total * 620 + 900))
-  }, [st.agentRunning, st.selectedId, data.markets, set])
+  }
 
   // ---- derived: market view ----
   const marketView = (m: PrototypeMarket) => {
@@ -246,7 +289,7 @@ export function useTerminal(): Scope {
     markets = allMarkets.filter((m) => cats.includes(m.cat))
   }
 
-  const selBase = data.markets.find((m) => m.id === st.selectedId)!
+  const selBase = data.markets.find((m) => m.id === st.selectedId) ?? data.markets[0]
   const sel = marketView(selBase) as ReturnType<typeof marketView> & Record<string, unknown>
   sel.polyW = pct(sel.poly)
   sel.kalshiW = pct(sel.kalshi)
@@ -264,7 +307,10 @@ export function useTerminal(): Scope {
   const dh = sel.hist.slice(-(rmap[st.range] || 80))
   const detailChart = areaChart(dh, 640, 240)
 
-  const an: RawAnalysis = prototypeAnalysis(protoToInput(selBase))
+  const an: RawAnalysis =
+    verdict && verdict.id === st.selectedId
+      ? verdictToAnalysis(verdict.v)
+      : prototypeAnalysis(protoToInput(selBase))
   const debateAll = an.debate
   const revealedDebate = debateAll.slice(0, Math.min(st.revealed, debateAll.length))
   const roleSummaries = {
@@ -309,7 +355,7 @@ export function useTerminal(): Scope {
     }
   })
   const v = { signal: an.signal, signalEn: an.signalEn, color: an.colorVar, confidence: an.confidence, side: an.side, size: an.size, reasons: an.reasons, risks: an.risks }
-  const verdict = { ...v, confidence: v.confidence + '%', confW: v.confidence + '%', border: v.color, headBg: 'var(--bg1)' }
+  const verdictView = { ...v, confidence: v.confidence + '%', confW: v.confidence + '%', border: v.color, headBg: 'var(--bg1)' }
 
   const railSignals = buildSignals().slice(0, 6)
   let feedSignals = buildSignals()
@@ -381,7 +427,12 @@ export function useTerminal(): Scope {
 
     goDashboard: () => go('dashboard'),
     goDetail: () => go('detail'),
-    goAgentFromDetail: () => openAgent(st.selectedId),
+    // "运行 Agent 分析" on the detail screen: open the agent screen AND kick off
+    // the real backend pipeline.
+    goAgentFromDetail: () => {
+      openAgent(st.selectedId)
+      void runAgent()
+    },
     sel,
     ranges: ['1H', '6H', '1D', '1W', 'ALL'].map((r) => ({ label: r, style: rangeStyle(st.range === r), go: () => set({ range: r }) })),
     detailChart,
@@ -394,7 +445,7 @@ export function useTerminal(): Scope {
     roles,
     debate,
     debateRounds: 3,
-    verdict,
+    verdict: verdictView,
 
     sigFilters: [
       { key: 'all', label: '全部信号' },

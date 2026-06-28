@@ -1,7 +1,9 @@
 import type { Signal, Source } from '@/lib/types'
-import { getMarket, getPairs, getSignals, saveAgentRun } from '@/lib/store'
+import { config } from '@/lib/config'
+import { getHistory, getMarket, getPairs, getSignals, saveAgentRun } from '@/lib/store'
 import { buildAgentInput } from '@/lib/agents/buildInput'
 import { runPipeline } from '@/lib/agents/pipeline'
+import { buildPrototypeMarkets, type PrototypeMarket } from '@/lib/seed/prototype'
 
 // Aggregated dashboard view assembled from the store: one row per cross-platform
 // event, plus signals and KPIs. Shared by /api/markets and the SSE stream.
@@ -93,6 +95,65 @@ export async function getBoard(): Promise<Board> {
       jumpCount,
     },
   }
+}
+
+// A market shaped exactly like the prototype dataset (so the terminal UI
+// renders it unchanged) plus `polyMarketId` for issuing agent API calls.
+export type MarketView = PrototypeMarket & { polyMarketId: string; source: Source }
+
+const FLAG_ORDER = ['spread', 'jump', 'volume', 'new']
+
+// Drives the terminal UI. In seed mode it returns the prototype dataset
+// verbatim (pixel-identical); in live mode it computes the same shape from the
+// store (merged history, cross-platform spread, signal-derived flags).
+export async function getMarketViews(): Promise<MarketView[]> {
+  if (config.DATA_SOURCE === 'seed') {
+    return buildPrototypeMarkets().map((m) => ({ ...m, polyMarketId: `poly-${m.id}`, source: 'poly' as Source }))
+  }
+
+  const pairs = await getPairs()
+  const signals = await getSignals(200)
+  const flagsByEvent = new Map<string, Set<string>>()
+  for (const s of signals) {
+    const flag = KIND_TO_FLAG[s.kind]
+    if (!flag) continue
+    const key = s.marketId.replace(/^(poly|kalshi)-/, '')
+    const set = flagsByEvent.get(key) ?? new Set<string>()
+    set.add(flag)
+    flagsByEvent.set(key, set)
+  }
+
+  const views: MarketView[] = []
+  for (const p of pairs) {
+    const input = await buildAgentInput('poly', p.polyMarketId)
+    if (!input) continue
+    const meta = await getMarket('poly', p.polyMarketId)
+    const polyHist = await getHistory('poly', p.polyMarketId)
+    const kalshiHist = await getHistory('kalshi', p.kalshiMarketId)
+    const n = Math.min(polyHist.length, kalshiHist.length)
+    const hist = Array.from({ length: n }, (_, i) => (polyHist[i].yesProb + kalshiHist[i].yesProb) / 2)
+    const key = p.polyMarketId.replace(/^poly-/, '')
+    const flags = FLAG_ORDER.filter((f) => flagsByEvent.get(key)?.has(f))
+    views.push({
+      id: key,
+      polyMarketId: p.polyMarketId,
+      source: 'poly',
+      q: input.q,
+      cat: meta?.category ?? '',
+      poly: input.poly,
+      kalshi: input.kalshi,
+      yesAvg: input.yesAvg,
+      spread: input.spread,
+      chg: input.chg,
+      vol24: input.vol24,
+      vol: input.vol,
+      liq: input.liq,
+      volChg: input.volChg,
+      flags,
+      hist,
+    })
+  }
+  return views
 }
 
 export async function runAndStoreAgent(source: Source, marketId: string) {

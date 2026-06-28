@@ -15,8 +15,10 @@ const screens = [
 ]
 
 async function capture(page, base, prefix) {
-  await page.goto(base, { waitUntil: 'networkidle' })
-  await page.waitForTimeout(1800)
+  // domcontentloaded (not networkidle): the SSE stream keeps the connection
+  // open, so networkidle never fires.
+  await page.goto(base, { waitUntil: 'domcontentloaded' })
+  await page.waitForTimeout(2200)
   for (const s of screens) {
     if (s.nav) {
       await page.getByRole('button', { name: s.nav }).first().click().catch(() => {})
