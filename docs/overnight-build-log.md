@@ -40,19 +40,43 @@
 5. **DB 容器端口 5544**(避让你已有的 5432)。
 6. 直接在 `main` 上小步提交(仓库本就空、首版、单人)。包管理用 **npm**。
 
-## 4. 进度(滚动更新)
+## 4. 进度(全部完成 ✅)
 
 - [x] 环境探明(网络/key/docker/pg)
 - [x] 解包原型 → `docs/prototype/extracted/`(模板/数据/字体)
 - [x] 起 Postgres 容器 `augur-postgres`
-- [ ] 脚手架 + Prisma schema + 共享类型
-- [ ] 里程碑①数据接入 + 归一化 + 持久化(+seed)
-- [ ] 里程碑②分析框架 + 信号
-- [ ] 里程碑③Agent 流水线
-- [ ] 里程碑④跨平台配对
-- [ ] 里程碑⑤终端 UI 100% 还原
-- [ ] 里程碑⑥README + 示例输出
-- [ ] 验证(测试 + 跑起来截图)
+- [x] 脚手架 + Prisma schema + 共享类型(`tsc` 干净)
+- [x] 里程碑①数据接入 + 归一化 + 持久化(+seed)— 16 市场 / 1280 ticks / 8 pairs 入库
+- [x] 里程碑②分析框架 + 信号 — 19 信号(跳动8/放量8/套利3)
+- [x] 里程碑③Agent 流水线 — 确定性 + LLM(OpenRouter)双引擎,均实测通过
+- [x] 里程碑④跨平台配对 — 策展表 + 相似度 + LLM 判定
+- [x] 里程碑⑤终端 UI 100% 还原 — Playwright 截图逐像素对比,控制台无告警
+- [x] 里程碑⑥README + 示例输出
+- [x] 验证:56 单测全绿、`tsc` 干净、产品 API curl 通过、UI 截图对比、LLM 链路实测
+
+### 验证证据
+- 测试:`npm test` → 56 passed;`npx tsc --noEmit` → clean。
+- 产品 API:`GET /api/markets` → 8 事件 + 19 信号 + KPI;`POST /api/agent/poly/poly-fed-jul`
+  → 套利/置信 0.78,analyst 文案与原型逐字一致。
+- LLM:`AGENT_ENGINE=llm` 经 OpenRouter(google/gemini-3.5-flash)实测,gpt6 → 套利/置信 0.85,中文论证为真实生成,~16s。
+- UI:`docs/prototype/shots/` 下 `orig-*` vs `port-*`(总览/详情/Agent/信号/布局B)逐像素一致。
+
+### 早上可以这样自己验
+```bash
+docker start augur-postgres        # 若容器已停
+npm install && npm run db:push && npm run db:seed
+npm run dev                        # 打开 http://localhost:3000
+# 想看真实 LLM:把 .env 里 AGENT_ENGINE 改成 llm,再 POST /api/agent/poly/poly-gpt6
+node docs/prototype/shoot.mjs both # 重新生成对比截图(需先 npx playwright install chromium)
+```
+
+## 6. 我未做 / 留给你定的(诚实记录)
+- **UI 与后端 API 的"实时联动"**:为确保 100% 还原,默认 UI 跑的是客户端原型逻辑(与后端同一份种子数据,
+  结果一致)。后端 API(含真实 LLM)已独立可用并验证。把 UI 的"运行 Agent 分析"接到 `/api/agent` 是
+  推荐的下一步集成,后端已就绪。⚠️ 若你希望我现在就接通,告诉我。
+- **live 模式**:真实 Polymarket WS + Kalshi 轮询代码已实现并配 fixture 单测,但沙箱内未长连真实交易所
+  压测;`DATA_SOURCE=live` 可切换。
+- **依赖告警**:`npm install` 报了几个传递依赖的 audit 告警(主要来自 Next 工具链),未处理,非阻塞。
 
 ## 5. 待你决定 / 可能调整(早上看这里)
 
