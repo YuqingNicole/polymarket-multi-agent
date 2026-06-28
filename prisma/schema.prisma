@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// A market on one platform. (source, marketId) is the natural key.
+model Market {
+  id               String   @id @default(cuid())
+  source           String // 'poly' | 'kalshi'
+  marketId         String // platform-native id: poly conditionId / kalshi ticker
+  title            String
+  category         String?
+  endDate          DateTime?
+  outcomes         String[] // usually ['Yes','No']
+  polyClobTokenIds String[] // [yesTokenId, noTokenId] for Polymarket
+  kalshiEventTicker String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([source, marketId])
+  @@map("markets")
+}
+
+// Time-series of probability/volume snapshots. Denormalized for fast writes.
+model Tick {
+  id          BigInt   @id @default(autoincrement())
+  source      String
+  marketId    String
+  yesProb     Float // 0..1
+  volume24h   Float
+  volumeTotal Float
+  ts          DateTime @default(now())
+
+  @@index([source, marketId, ts])
+  @@map("ticks")
+}
+
+// Detected anomalies / signals feeding the terminal signal rail.
+model Signal {
+  id       String   @id @default(cuid())
+  source   String
+  marketId String
+  kind     String // 'prob_jump' | 'vol_spike' | 'xplat_spread'
+  severity Float // 0..1
+  detail   String
+  ts       DateTime @default(now())
+
+  @@index([marketId, ts])
+  @@map("signals")
+}
+
+// Cross-platform event mapping (curated seed + LLM matcher).
+model MarketPair {
+  id            String  @id @default(cuid())
+  polyMarketId  String
+  kalshiMarketId String
+  confidence    Float // 0..1
+  source        String // 'curated' | 'llm'
+  mergedYesProb Float?
+  createdAt     DateTime @default(now())
+
+  @@unique([polyMarketId, kalshiMarketId])
+  @@map("market_pairs")
+}
+
+// Stored output of an agent pipeline run for a market.
+model AgentRun {
+  id         String   @id @default(cuid())
+  source     String
+  marketId   String
+  engine     String // 'deterministic' | 'llm'
+  direction  String // 'YES' | 'NO' | 'HOLD'
+  sizePct    Float
+  confidence Float
+  rationale  String
+  bullCase   String
+  bearCase   String
+  riskNotes  String
+  raw        Json
+  createdAt  DateTime @default(now())
+
+  @@index([source, marketId, createdAt])
+  @@map("agent_runs")
+}

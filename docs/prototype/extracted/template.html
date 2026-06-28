@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="55d756b3-9c3c-41d1-bde9-dab1816cd94c"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<style>/* cyrillic-ext */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("3427ce92-b82f-4032-8a4a-f25b7932b841") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("740c05a3-3fe9-4cf2-af8f-6f19b32d0325") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("73c88fc2-865c-41e9-9837-f089dd51eeda") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("beaa116e-cf64-43b6-9a32-edf0de139e81") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("9e5bf787-d192-4a19-85ab-977071542aa4") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("551aca20-9b75-45e3-8498-90ed841b3e23") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("b79e4db9-fae5-4823-adda-f22061a1c326") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("5b855dbc-5469-4337-89ac-fdc7e6571046") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("cdb7b766-b17c-44bb-b77d-04c5c8c57ac0") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("c2e27d8b-b993-4c77-bdf7-901b120f6558") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("c033332d-7412-42a4-89ba-5dd53255c0b3") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("15a50687-5184-4229-8a74-04c50d8e29a0") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("31735764-de1f-426c-b0c7-66f6e62ac5ec") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("c6ffede5-7bfb-4bbb-afc3-a6440acedbe4") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("0a7406a4-4a5b-4812-a2cf-d122971d33d5") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("aa73eb42-9b36-4f6a-ac32-518d8ef7f6b6") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("99894a1f-bd61-4808-93dd-00836d60a12b") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ebc28143-5e59-408a-90a2-e2979567198f") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("c1bad1af-c541-477e-9251-0ba346c8c554") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ab971124-b2da-49fe-a871-72f1b3bb5bbf") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("8441d967-62ab-41e4-a9e1-07ebf68abea6") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("aa73eb42-9b36-4f6a-ac32-518d8ef7f6b6") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("99894a1f-bd61-4808-93dd-00836d60a12b") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ebc28143-5e59-408a-90a2-e2979567198f") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("c1bad1af-c541-477e-9251-0ba346c8c554") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ab971124-b2da-49fe-a871-72f1b3bb5bbf") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("8441d967-62ab-41e4-a9e1-07ebf68abea6") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("aa73eb42-9b36-4f6a-ac32-518d8ef7f6b6") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("99894a1f-bd61-4808-93dd-00836d60a12b") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ebc28143-5e59-408a-90a2-e2979567198f") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("c1bad1af-c541-477e-9251-0ba346c8c554") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ab971124-b2da-49fe-a871-72f1b3bb5bbf") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("8441d967-62ab-41e4-a9e1-07ebf68abea6") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("aa73eb42-9b36-4f6a-ac32-518d8ef7f6b6") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("99894a1f-bd61-4808-93dd-00836d60a12b") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ebc28143-5e59-408a-90a2-e2979567198f") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("c1bad1af-c541-477e-9251-0ba346c8c554") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("ab971124-b2da-49fe-a871-72f1b3bb5bbf") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("8441d967-62ab-41e4-a9e1-07ebf68abea6") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("5896e04a-12ca-439e-8bd6-adb54fffad78") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("877bba5a-21e8-4f93-8032-f5a1711babe5") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("1a540eef-a881-46b7-9841-87d7ab6f04ac") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("5896e04a-12ca-439e-8bd6-adb54fffad78") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("877bba5a-21e8-4f93-8032-f5a1711babe5") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("1a540eef-a881-46b7-9841-87d7ab6f04ac") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+:root{--bg0:#14120E;--bg1:#16140F;--bg2:#1A1813;--bg3:#1F1C16;--bg4:#232019;--border:#2A261F;--border-soft:#2E2A22;--border2:#322E26;--border3:#463F34;--text-hi:#ECE7DB;--text-hi2:#D8D2C5;--text-2:#C2BAA9;--text-2b:#B7B0A2;--text-3:#9A9384;--text-mid:#8C857A;--text-low:#6E675B;--text-low2:#5C564B;--text-faint:#4F493F;--accent:#D97757;--accent-hi:#E08A6E;--up:#6FA77C;--down:#CB6066;--amber:#C9A24B;--poly:#6E86C9;--kalshi:#4F9D8E;--purple:#9B7FC9;--risk:#C97A4E;--tint-clay:#3A2E26;--tint-amber:#2E2B1C;--tint-teal:#1F2E2A;--tint-purple:#2A2433;--tint-blue:#23303A;--tint-green:#1F2E26;--tint-red:#2E1F22;--bubble-bull:#171E18;--bubble-bull-bd:#243228;--bubble-bear:#1E1718;--bubble-bear-bd:#322025;--pipe-done-line:#2E4A38;}
+  :root[data-theme="light"]{--bg0:#ECE7DA;--bg1:#F3EFE6;--bg2:#FBF9F3;--bg3:#EFEAE0;--bg4:#E4DECF;--border:#DED7C8;--border-soft:#D6CFBE;--border2:#CDC5B3;--border3:#BCB2A0;--text-hi:#211E18;--text-hi2:#2C2820;--text-2:#4A4538;--text-2b:#4A4538;--text-3:#615A4C;--text-mid:#6E6757;--text-low:#857C6B;--text-low2:#968C7A;--text-faint:#A89F8C;--accent:#C2603C;--accent-hi:#D07A55;--up:#3F8A57;--down:#BC3B44;--amber:#937420;--poly:#4660A6;--kalshi:#2E8273;--purple:#6E51A0;--risk:#AF6035;--tint-clay:#F4E4DA;--tint-amber:#F1EAD3;--tint-teal:#DBEDE6;--tint-purple:#E9E2F2;--tint-blue:#DEE7F1;--tint-green:#DBEDDF;--tint-red:#F4DEE0;--bubble-bull:#EDF4EB;--bubble-bull-bd:#D1E4D4;--bubble-bear:#F7EBEC;--bubble-bear-bd:#ECD6D8;--pipe-done-line:#B6D6BE;}
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--bg0); color: var(--text-hi); font-family: 'IBM Plex Sans', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; }
+  ::-webkit-scrollbar { width: 9px; height: 9px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 6px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border3); }
+  @keyframes pulseDot { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  @keyframes blink { 0%,100% { opacity: .2; } 50% { opacity: 1; } }
+  @keyframes barRise { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</helmet>
+
+<div style="height: 100vh; display: grid; grid-template-columns: 244px 1fr; background: var(--bg0);">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside style="background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 0;">
+    <div style="padding: 20px 20px 18px; border-bottom: 1px solid var(--bg4);">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="width: 26px; height: 26px; border-radius: 7px; background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <div style="width: 10px; height: 10px; border-radius: 2px; background: var(--bg2); transform: rotate(45deg);"></div>
+        </div>
+        <div>
+          <div style="font-size: 14px; font-weight: 600; letter-spacing: -.2px; line-height: 1;">Augur<span style="color: var(--accent);">.</span>Terminal</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--text-low); letter-spacing: .5px; margin-top: 3px;">PREDICTION MARKET AGENT</div>
+        </div>
+      </div>
+    </div>
+
+    <nav style="padding: 14px 12px; display: flex; flex-direction: column; gap: 3px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-low2); letter-spacing: 1.2px; padding: 6px 10px 8px;">工作台</div>
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+        <button onclick="{{ n.go }}" style="{{ n.style }}" style-hover="background: var(--bg4);">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 18px; text-align: center; color: {{ n.icoColor }};">{{ n.ico }}</span>
+          <span style="flex: 1; text-align: left;">{{ n.label }}</span>
+          <sc-if value="{{ n.badge }}" hint-placeholder-val="">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; background: var(--tint-clay); color: var(--accent); padding: 1px 6px; border-radius: 10px;">{{ n.badge }}</span>
+          </sc-if>
+        </button>
+      </sc-for>
+    </nav>
+
+    <div style="margin-top: auto; padding: 14px 16px; border-top: 1px solid var(--bg4);">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-low2); letter-spacing: 1.2px; margin-bottom: 11px;">数据源</div>
+      <div style="display: flex; flex-direction: column; gap: 9px;">
+        <div style="display: flex; align-items: center; gap: 9px;">
+          <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--up); animation: pulseDot 2s infinite;"></span>
+          <span style="font-size: 12px; color: var(--text-2);">Polymarket</span>
+          <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--up);">LIVE</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 9px;">
+          <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--up); animation: pulseDot 2s infinite .5s;"></span>
+          <span style="font-size: 12px; color: var(--text-2);">Kalshi</span>
+          <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--up);">LIVE</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 9px;">
+          <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--accent);"></span>
+          <span style="font-size: 12px; color: var(--text-2);">Agent Engine</span>
+          <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--accent);">v0.3</span>
+        </div>
+      </div>
+      <div style="margin-top: 13px; padding-top: 12px; border-top: 1px solid var(--bg4); font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-low); display: flex; justify-content: space-between;">
+        <span>{{ clock }} UTC</span>
+        <span>{{ marketCount }} 标的</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main style="display: flex; flex-direction: column; min-width: 0; background: var(--bg0);">
+
+    <!-- top bar -->
+    <header style="height: 56px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 22px; gap: 18px; flex-shrink: 0; background: var(--bg1);">
+      <div style="min-width: 0;">
+        <div style="font-size: 15px; font-weight: 600; letter-spacing: -.2px;">{{ headerTitle }}</div>
+        <div style="font-size: 11px; color: var(--text-low); margin-top: 1px;">{{ headerSub }}</div>
+      </div>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 14px;">
+        <div style="display: flex; align-items: center; gap: 8px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 7px 11px; width: 250px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; color: var(--text-low2); font-size: 12px;">⌕</span>
+          <span style="font-size: 12px; color: var(--text-low);">搜索标的、事件、信号…</span>
+          <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-faint); border: 1px solid var(--border-soft); border-radius: 4px; padding: 1px 5px;">⌘K</span>
+        </div>
+        <button onclick="{{ toggleTheme }}" style="display: flex; align-items: center; gap: 7px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; cursor: pointer; color: var(--text-2); font-family: 'IBM Plex Sans', sans-serif; font-size: 12px;" style-hover="border-color: var(--border3); color: var(--text-hi);">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--accent);">{{ themeIcon }}</span>{{ themeLabel }}
+        </button>
+        <div style="display: flex; align-items: center; gap: 7px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-mid);">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--up); animation: pulseDot 1.6s infinite;"></span>
+          实时
+        </div>
+      </div>
+    </header>
+
+    <div style="flex: 1; overflow: auto; min-height: 0;">
+
+      <!-- ============ SCREEN: DASHBOARD ============ -->
+      <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+        <div style="padding: 20px 22px 40px;">
+
+          <!-- KPI strip -->
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px;">
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+              <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 11px; padding: 14px 16px;">
+                <div style="font-size: 11px; color: var(--text-mid); letter-spacing: .2px;">{{ k.label }}</div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 23px; font-weight: 600; margin-top: 7px; letter-spacing: -.5px;">{{ k.value }}</div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; margin-top: 5px; color: {{ k.deltaColor }};">{{ k.delta }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- controls row -->
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+            <div style="display: flex; gap: 4px;">
+              <sc-for list="{{ filters }}" as="f" hint-placeholder-count="5">
+                <button onclick="{{ f.go }}" style="{{ f.style }}" style-hover="border-color: var(--border3);">{{ f.label }}</button>
+              </sc-for>
+            </div>
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 9px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-low); letter-spacing: .5px;">布局</span>
+              <div style="display: flex; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 2px;">
+                <button onclick="{{ setLayoutA }}" style="{{ layoutAStyle }}">A · 数据表</button>
+                <button onclick="{{ setLayoutB }}" style="{{ layoutBStyle }}">B · 监控卡</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ---- LAYOUT A: dense table + signal rail ---- -->
+          <sc-if value="{{ isLayoutA }}" hint-placeholder-val="{{ true }}">
+            <div style="display: grid; grid-template-columns: minmax(560px, 1fr) 300px; gap: 16px; align-items: start; min-width: 940px;">
+              <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+                <div style="display: grid; grid-template-columns: minmax(220px, 1fr) 78px 96px 64px 88px 80px; gap: 0; padding: 11px 16px; border-bottom: 1px solid var(--bg4); font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-low); letter-spacing: .6px;">
+                  <div>标的 / MARKET</div>
+                  <div style="text-align: right;">YES 概率</div>
+                  <div style="text-align: right;">24H 趋势</div>
+                  <div style="text-align: right;">价差</div>
+                  <div style="text-align: right;">24H 成交</div>
+                  <div style="text-align: right;">信号</div>
+                </div>
+                <sc-for list="{{ markets }}" as="m" hint-placeholder-count="8">
+                  <div onclick="{{ m.onOpen }}" style="display: grid; grid-template-columns: minmax(220px, 1fr) 78px 96px 64px 88px 80px; gap: 0; align-items: center; padding: 13px 16px; border-bottom: 1px solid var(--bg3); cursor: pointer;" style-hover="background: var(--bg3);">
+                    <div style="min-width: 0; padding-right: 12px;">
+                      <div style="font-size: 13px; font-weight: 500; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ m.q }}</div>
+                      <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--poly);">● Polymarket</span>
+                        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--kalshi);">● Kalshi</span>
+                        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--text-low2);">{{ m.cat }}</span>
+                      </div>
+                    </div>
+                    <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600;">{{ m.yesPct }}</div>
+                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
+                      <span>{{ m.spark }}</span>
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: {{ m.chgColor }}; width: 36px; text-align: right;">{{ m.chgText }}</span>
+                    </div>
+                    <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: {{ m.spreadColor }};">{{ m.spreadText }}</div>
+                    <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-2);">{{ m.volText }}</div>
+                    <div style="display: flex; justify-content: flex-end; gap: 4px;">
+                      <sc-for list="{{ m.badges }}" as="b" hint-placeholder-count="0">
+                        <span title="{{ b.full }}" style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 2px 5px; border-radius: 4px; background: {{ b.bg }}; color: {{ b.fg }};">{{ b.label }}</span>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <!-- signal rail -->
+              <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 0; position: sticky; top: 0;">
+                <div style="padding: 14px 16px; border-bottom: 1px solid var(--bg4); display: flex; align-items: center; gap: 8px;">
+                  <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulseDot 1.4s infinite;"></span>
+                  <span style="font-size: 13px; font-weight: 600;">异常信号</span>
+                  <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-low);">实时 · {{ signalCount }}</span>
+                </div>
+                <div style="padding: 8px;">
+                  <sc-for list="{{ railSignals }}" as="s" hint-placeholder-count="5">
+                    <div onclick="{{ s.onOpen }}" style="padding: 11px 12px; border-radius: 9px; cursor: pointer; display: flex; gap: 11px;" style-hover="background: var(--bg3);">
+                      <div style="width: 30px; height: 30px; border-radius: 8px; background: {{ s.bg }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: {{ s.fg }};">{{ s.ico }}</span>
+                      </div>
+                      <div style="min-width: 0; flex: 1;">
+                        <div style="display: flex; align-items: baseline; gap: 6px;">
+                          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: {{ s.fg }}; font-weight: 600;">{{ s.type }}</span>
+                          <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-low2);">{{ s.time }}</span>
+                        </div>
+                        <div style="font-size: 12px; line-height: 1.35; margin-top: 3px; color: var(--text-hi2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ s.q }}</div>
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; margin-top: 4px; color: {{ s.fg }};">{{ s.metric }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ---- LAYOUT B: watchlist cards ---- -->
+          <sc-if value="{{ isLayoutB }}" hint-placeholder-val="">
+            <div>
+              <!-- signal scroller -->
+              <div style="display: flex; gap: 11px; overflow-x: auto; padding-bottom: 14px; margin-bottom: 6px;">
+                <sc-for list="{{ railSignals }}" as="s" hint-placeholder-count="5">
+                  <div onclick="{{ s.onOpen }}" style="flex: 0 0 232px; background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid {{ s.fg }}; border-radius: 10px; padding: 12px 14px; cursor: pointer;" style-hover="border-color: var(--border3);">
+                    <div style="display: flex; align-items: center; gap: 7px;">
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: {{ s.fg }};">{{ s.ico }}</span>
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: {{ s.fg }}; font-weight: 600;">{{ s.type }}</span>
+                      <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-low2);">{{ s.time }}</span>
+                    </div>
+                    <div style="font-size: 12.5px; line-height: 1.35; margin-top: 8px; color: var(--text-hi2);">{{ s.q }}</div>
+                    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; margin-top: 8px; font-weight: 600; color: {{ s.fg }};">{{ s.metric }}</div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 13px;">
+                <sc-for list="{{ markets }}" as="m" hint-placeholder-count="8">
+                  <div onclick="{{ m.onOpen }}" style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 15px 16px; cursor: pointer;" style-hover="border-color: var(--border3);">
+                    <div style="display: flex; align-items: flex-start; gap: 8px;">
+                      <div style="flex: 1; min-width: 0;">
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--text-low2); letter-spacing: .4px;">{{ m.cat }}</div>
+                        <div style="font-size: 14px; font-weight: 500; line-height: 1.35; margin-top: 5px;">{{ m.q }}</div>
+                      </div>
+                      <div style="display: flex; flex-direction: column; gap: 3px; align-items: flex-end;">
+                        <sc-for list="{{ m.badges }}" as="b" hint-placeholder-count="0">
+                          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 2px 5px; border-radius: 4px; background: {{ b.bg }}; color: {{ b.fg }};">{{ b.label }}</span>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-top: 14px;">
+                      <div>
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 28px; font-weight: 600; letter-spacing: -1px; line-height: 1;">{{ m.yesPct }}</div>
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; margin-top: 5px; color: {{ m.chgColor }};">{{ m.chgText }} · 24h</div>
+                      </div>
+                      <div style="text-align: right;">
+                        <span>{{ m.sparkBig }}</span>
+                      </div>
+                    </div>
+                    <div style="display: flex; gap: 0; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--bg4);">
+                      <div style="flex: 1;">
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--poly);">POLY</div>
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; margin-top: 2px;">{{ m.polyPct }}</div>
+                      </div>
+                      <div style="flex: 1;">
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--kalshi);">KALSHI</div>
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; margin-top: 2px;">{{ m.kalshiPct }}</div>
+                      </div>
+                      <div style="flex: 1;">
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-low);">价差</div>
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; margin-top: 2px; color: {{ m.spreadColor }};">{{ m.spreadText }}</div>
+                      </div>
+                      <div style="flex: 1; text-align: right;">
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-low);">24H VOL</div>
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; margin-top: 2px; color: var(--text-2);">{{ m.volText }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ============ SCREEN: DETAIL ============ -->
+      <sc-if value="{{ isDetail }}" hint-placeholder-val="">
+        <div style="padding: 20px 22px 40px;">
+          <button onclick="{{ goDashboard }}" style="background: none; border: none; color: var(--text-mid); font-family: 'IBM Plex Mono', monospace; font-size: 11px; cursor: pointer; padding: 0; margin-bottom: 16px;" style-hover="color: var(--text-hi);">← 返回总览</button>
+
+          <div style="display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px;">
+            <div style="flex: 1; min-width: 0;">
+              <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 8px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-low2); letter-spacing: .5px;">{{ sel.cat }}</span>
+                <sc-for list="{{ sel.badges }}" as="b" hint-placeholder-count="0">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 2px 6px; border-radius: 4px; background: {{ b.bg }}; color: {{ b.fg }};">{{ b.full }}</span>
+                </sc-for>
+              </div>
+              <h1 style="font-family: 'Newsreader', serif; font-size: 27px; font-weight: 500; letter-spacing: -.3px; margin: 0; line-height: 1.2;">{{ sel.q }}</h1>
+            </div>
+            <button onclick="{{ goAgentFromDetail }}" style="background: var(--accent); border: none; color: var(--bg2); font-weight: 600; font-size: 13px; padding: 11px 18px; border-radius: 9px; cursor: pointer; display: flex; align-items: center; gap: 8px; flex-shrink: 0;" style-hover="background: var(--accent-hi);">
+              <span style="font-family: 'IBM Plex Mono', monospace;">◆</span> 运行 Agent 分析
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start;">
+            <!-- chart -->
+            <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 18px;">
+              <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                <div>
+                  <div style="font-size: 12px; color: var(--text-mid);">合并 YES 隐含概率</div>
+                  <div style="display: flex; align-items: baseline; gap: 10px; margin-top: 4px;">
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 32px; font-weight: 600; letter-spacing: -1px;">{{ sel.yesPct }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: {{ sel.chgColor }};">{{ sel.chgText }}</span>
+                  </div>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 3px; background: var(--bg1); border: 1px solid var(--border); border-radius: 7px; padding: 2px;">
+                  <sc-for list="{{ ranges }}" as="r" hint-placeholder-count="5">
+                    <button onclick="{{ r.go }}" style="{{ r.style }}">{{ r.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+              <div>{{ detailChart }}</div>
+              <div style="display: flex; align-items: center; gap: 20px; margin-top: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 11px;">
+                <span style="display: flex; align-items: center; gap: 7px; color: var(--text-mid);"><span style="width: 14px; height: 2px; background: var(--poly); display: inline-block;"></span>Polymarket {{ sel.polyPct }}</span>
+                <span style="display: flex; align-items: center; gap: 7px; color: var(--text-mid);"><span style="width: 14px; height: 2px; background: var(--kalshi); display: inline-block;"></span>Kalshi {{ sel.kalshiPct }}</span>
+              </div>
+            </div>
+
+            <!-- stats column -->
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-low); letter-spacing: .6px; margin-bottom: 12px;">市场指标</div>
+                <sc-for list="{{ sel.stats }}" as="st" hint-placeholder-count="5">
+                  <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--bg3);">
+                    <span style="font-size: 12px; color: var(--text-mid);">{{ st.label }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: {{ st.color }};">{{ st.value }}</span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <!-- cross-platform spread -->
+              <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-low); letter-spacing: .6px; margin-bottom: 14px;">跨平台价差 (套利视图)</div>
+                <div style="display: flex; flex-direction: column; gap: 13px;">
+                  <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px;"><span style="color: var(--poly);">Polymarket</span><span style="font-family: 'IBM Plex Mono', monospace;">{{ sel.polyPct }}</span></div>
+                    <div style="height: 6px; background: var(--bg4); border-radius: 4px; overflow: hidden;"><div style="height: 100%; width: {{ sel.polyW }}; background: var(--poly); border-radius: 4px;"></div></div>
+                  </div>
+                  <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px;"><span style="color: var(--kalshi);">Kalshi</span><span style="font-family: 'IBM Plex Mono', monospace;">{{ sel.kalshiPct }}</span></div>
+                    <div style="height: 6px; background: var(--bg4); border-radius: 4px; overflow: hidden;"><div style="height: 100%; width: {{ sel.kalshiW }}; background: var(--kalshi); border-radius: 4px;"></div></div>
+                  </div>
+                </div>
+                <div style="margin-top: 14px; padding: 11px 13px; background: {{ sel.spreadBoxBg }}; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600; color: {{ sel.spreadColor }};">{{ sel.spreadText }}</span>
+                  <span style="font-size: 11.5px; line-height: 1.35; color: var(--text-2b);">{{ sel.spreadNote }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ SCREEN: AGENT ============ -->
+      <sc-if value="{{ isAgent }}" hint-placeholder-val="">
+        <div style="padding: 20px 22px 40px;">
+          <button onclick="{{ goDetail }}" style="background: none; border: none; color: var(--text-mid); font-family: 'IBM Plex Mono', monospace; font-size: 11px; cursor: pointer; padding: 0; margin-bottom: 14px;" style-hover="color: var(--text-hi);">← 返回详情</button>
+
+          <!-- context bar -->
+          <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 15px 18px; display: flex; align-items: center; gap: 18px; margin-bottom: 16px;">
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-low2);">{{ sel.cat }} · 分析对象</div>
+              <div style="font-size: 16px; font-weight: 600; margin-top: 3px;">{{ sel.q }}</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-low);">当前 YES</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600;">{{ sel.yesPct }}</div>
+            </div>
+            <button onclick="{{ runAgent }}" style="{{ runBtnStyle }}" style-hover="background: var(--accent-hi);">{{ runBtnLabel }}</button>
+          </div>
+
+          <!-- pipeline -->
+          <div style="display: flex; align-items: center; gap: 0; margin-bottom: 20px; background: var(--bg1); border: 1px solid var(--border); border-radius: 11px; padding: 14px 18px;">
+            <sc-for list="{{ pipeline }}" as="p" hint-placeholder-count="6">
+              <div style="display: flex; align-items: center; flex: 1;">
+                <div style="display: flex; align-items: center; gap: 9px;">
+                  <div style="width: 24px; height: 24px; border-radius: 7px; background: {{ p.bg }}; color: {{ p.fg }}; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; flex-shrink: 0;">{{ p.n }}</div>
+                  <div style="font-size: 11.5px; color: {{ p.txt }}; font-weight: {{ p.weight }};">{{ p.label }}</div>
+                </div>
+                <sc-if value="{{ p.arrow }}" hint-placeholder-val="{{ true }}">
+                  <div style="flex: 1; height: 1px; background: {{ p.line }}; margin: 0 12px;"></div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 360px; gap: 16px; align-items: start;">
+            <!-- left: roles + debate -->
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <!-- role cards -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <sc-for list="{{ roles }}" as="r" hint-placeholder-count="4">
+                  <div style="background: var(--bg2); border: 1px solid {{ r.border }}; border-radius: 11px; padding: 14px;">
+                    <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 9px;">
+                      <div style="width: 28px; height: 28px; border-radius: 8px; background: {{ r.bg }}; color: {{ r.fg }}; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600;">{{ r.ico }}</div>
+                      <div>
+                        <div style="font-size: 13px; font-weight: 600;">{{ r.name }}</div>
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-low); letter-spacing: .3px;">{{ r.role }}</div>
+                      </div>
+                      <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: {{ r.fg }};">{{ r.tag }}</span>
+                    </div>
+                    <div style="font-size: 12px; line-height: 1.5; color: var(--text-2b);">{{ r.summary }}</div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <!-- debate stream -->
+              <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                  <span style="font-size: 13px; font-weight: 600;">多空辩论</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-low);">Bull ⇄ Bear · {{ debateRounds }} 轮</span>
+                  <sc-if value="{{ agentRunning }}" hint-placeholder-val="">
+                    <span style="margin-left: auto; display: flex; align-items: center; gap: 3px;">
+                      <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--accent); animation: blink 1s infinite;"></span>
+                      <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--accent); animation: blink 1s infinite .2s;"></span>
+                      <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--accent); animation: blink 1s infinite .4s;"></span>
+                    </span>
+                  </sc-if>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <sc-for list="{{ debate }}" as="d" hint-placeholder-count="4">
+                    <div style="display: flex; gap: 11px; flex-direction: {{ d.dir }}; animation: fadeUp .3s ease;">
+                      <div style="width: 26px; height: 26px; border-radius: 7px; background: {{ d.bg }}; color: {{ d.fg }}; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; flex-shrink: 0;">{{ d.ico }}</div>
+                      <div style="max-width: 78%; background: {{ d.bubbleBg }}; border: 1px solid {{ d.bubbleBorder }}; border-radius: 10px; padding: 10px 13px;">
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: {{ d.fg }}; margin-bottom: 4px;">{{ d.name }}</div>
+                        <div style="font-size: 12.5px; line-height: 1.5; color: var(--text-hi2);">{{ d.text }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ agentRunning }}" hint-placeholder-val="">
+                    <div style="display: flex; align-items: center; gap: 8px; padding-left: 37px; color: var(--text-low); font-size: 11px; font-family: 'IBM Plex Mono', monospace;">
+                      <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--text-low); animation: blink 1s infinite;"></span>
+                      正在生成下一轮论证…
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+            </div>
+
+            <!-- right: verdict -->
+            <div style="position: sticky; top: 0;">
+              <div style="background: var(--bg2); border: 1px solid {{ verdict.border }}; border-radius: 14px; overflow: hidden;">
+                <div style="padding: 16px 18px; background: {{ verdict.headBg }}; border-bottom: 1px solid var(--bg4);">
+                  <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-mid); letter-spacing: .6px;">交易员 · 结构化判断</div>
+                  <div style="display: flex; align-items: center; gap: 10px; margin-top: 9px;">
+                    <span style="font-family: 'Newsreader', serif; font-size: 26px; font-weight: 500; color: {{ verdict.color }};">{{ verdict.signal }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: {{ verdict.color }}; border: 1px solid {{ verdict.color }}; padding: 2px 7px; border-radius: 5px;">{{ verdict.signalEn }}</span>
+                  </div>
+                </div>
+                <div style="padding: 16px 18px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px;">
+                    <span style="font-size: 12px; color: var(--text-mid);">置信度</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; color: {{ verdict.color }};">{{ verdict.confidence }}</span>
+                  </div>
+                  <div style="height: 7px; background: var(--bg4); border-radius: 4px; overflow: hidden; margin-bottom: 16px;">
+                    <div style="height: 100%; width: {{ verdict.confW }}; background: {{ verdict.color }}; border-radius: 4px;"></div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+                    <div style="background: var(--bg1); border-radius: 8px; padding: 10px 12px;">
+                      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-low);">建议方向</div>
+                      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; margin-top: 3px; color: var(--text-hi);">{{ verdict.side }}</div>
+                    </div>
+                    <div style="background: var(--bg1); border-radius: 8px; padding: 10px 12px;">
+                      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-low);">建议仓位</div>
+                      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; margin-top: 3px; color: var(--text-hi);">{{ verdict.size }}</div>
+                    </div>
+                  </div>
+
+                  <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-low); letter-spacing: .5px; margin-bottom: 8px;">核心理由</div>
+                  <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                    <sc-for list="{{ verdict.reasons }}" as="rs" hint-placeholder-count="3">
+                      <div style="display: flex; gap: 9px; align-items: flex-start;">
+                        <span style="color: {{ verdict.color }}; font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.4;">▸</span>
+                        <span style="font-size: 12px; line-height: 1.5; color: var(--text-2);">{{ rs }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+
+                  <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-low); letter-spacing: .5px; margin-bottom: 8px;">风控提示</div>
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <sc-for list="{{ verdict.risks }}" as="rk" hint-placeholder-count="2">
+                      <div style="display: flex; gap: 9px; align-items: flex-start;">
+                        <span style="color: var(--risk); font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.4;">△</span>
+                        <span style="font-size: 12px; line-height: 1.5; color: var(--text-3);">{{ rk }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+
+                  <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--bg4); font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--text-low2); line-height: 1.5;">
+                    输出为结构化 JSON · 含 signal / confidence / side / sizing / reasons[] / risks[]，可直接对接执行层。非投资建议。
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ SCREEN: SIGNALS ============ -->
+      <sc-if value="{{ isSignals }}" hint-placeholder-val="">
+        <div style="padding: 20px 22px 40px;">
+          <div style="display: flex; gap: 4px; margin-bottom: 16px;">
+            <sc-for list="{{ sigFilters }}" as="f" hint-placeholder-count="5">
+              <button onclick="{{ f.go }}" style="{{ f.style }}" style-hover="border-color: var(--border3);">{{ f.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 11px;">
+            <sc-for list="{{ feedSignals }}" as="s" hint-placeholder-count="6">
+              <div style="background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid {{ s.fg }}; border-radius: 11px; padding: 16px 18px; display: flex; align-items: center; gap: 18px;">
+                <div style="width: 42px; height: 42px; border-radius: 10px; background: {{ s.bg }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 17px; color: {{ s.fg }};">{{ s.ico }}</span>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 9px;">
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; color: {{ s.fg }}; background: {{ s.bg }}; padding: 2px 7px; border-radius: 4px;">{{ s.type }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--text-low2);">{{ s.cat }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--text-low2);">· {{ s.time }}</span>
+                  </div>
+                  <div style="font-size: 14px; font-weight: 500; margin-top: 6px;">{{ s.q }}</div>
+                  <div style="font-size: 12px; color: var(--text-3); margin-top: 4px; line-height: 1.4;">{{ s.detail }}</div>
+                </div>
+                <div style="text-align: right; flex-shrink: 0;">
+                  <div style="margin-bottom: 6px;">{{ s.spark }}</div>
+                  <div style="font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600; color: {{ s.fg }};">{{ s.metric }}</div>
+                </div>
+                <button onclick="{{ s.onOpen }}" style="background: var(--bg4); border: 1px solid var(--border2); color: var(--text-hi); font-size: 12px; padding: 9px 14px; border-radius: 8px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; gap: 7px;" style-hover="border-color: var(--accent); color: var(--accent);">
+                  分析 <span style="font-family: 'IBM Plex Mono', monospace;">→</span>
+                </button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.data = this.buildData();
+    this.state = {
+      screen: 'dashboard',
+      layout: 'A',
+      filter: 'all',
+      sigFilter: 'all',
+      selectedId: this.data.markets[0].id,
+      range: '1D',
+      theme: 'dark',
+      agentStep: 6,
+      agentRunning: false,
+      revealed: 99,
+    };
+    this._timers = [];
+  }
+
+  componentWillUnmount() { this._timers.forEach(clearTimeout); }
+
+  componentDidMount() { document.documentElement.setAttribute('data-theme', this.state.theme); }
+  componentDidUpdate() { document.documentElement.setAttribute('data-theme', this.state.theme); }
+  toggleTheme() { this.setState((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })); }
+
+  // ---- deterministic RNG ----
+  rng(seed) {
+    let s = seed >>> 0;
+    return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+  }
+  hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+
+  genHist(seed, target, vol, n) {
+    const r = this.rng(seed);
+    const arr = [];
+    let v = target - (r() - 0.5) * vol * 2.5;
+    for (let i = 0; i < n; i++) {
+      const pull = (target - v) * 0.12;
+      v += pull + (r() - 0.5) * vol;
+      v = Math.max(0.03, Math.min(0.97, v));
+      arr.push(v);
+    }
+    arr[n - 1] = target;
+    return arr;
+  }
+
+  buildData() {
+    const base = [
+      { id: 'fed-jul', q: '美联储 7 月降息 25bp？', cat: '宏观利率', poly: 0.68, kalshi: 0.63, chg: 6, vol24: 2800000, vol: 41000000, liq: 2100000, volChg: 64, flags: ['spread', 'jump'] },
+      { id: 'gpt6', q: 'OpenAI 2026 年内发布 GPT-6？', cat: '科技', poly: 0.57, kalshi: 0.49, chg: 12, vol24: 1300000, vol: 9000000, liq: 520000, volChg: 218, flags: ['spread', 'jump', 'volume', 'new'] },
+      { id: 'btc-150', q: '比特币 2026 年底突破 $150K？', cat: '加密资产', poly: 0.44, kalshi: 0.41, chg: 9, vol24: 3600000, vol: 28000000, liq: 1400000, volChg: 141, flags: ['jump', 'volume'] },
+      { id: 'shutdown', q: '美国政府 9 月前关门？', cat: '政治', poly: 0.38, kalshi: 0.33, chg: 14, vol24: 900000, vol: 6000000, liq: 350000, volChg: 186, flags: ['jump', 'spread', 'volume'] },
+      { id: 'house-26', q: '民主党赢得 2026 众议院多数？', cat: '政治', poly: 0.52, kalshi: 0.51, chg: 2, vol24: 3500000, vol: 33000000, liq: 1800000, volChg: 12, flags: [] },
+      { id: 'nvda-4t', q: '英伟达年底市值超 $4 万亿？', cat: '股票', poly: 0.61, kalshi: 0.58, chg: 3, vol24: 1150000, vol: 7000000, liq: 400000, volChg: 21, flags: ['spread'] },
+      { id: 'recession-26', q: '美国 2026 年陷入衰退？', cat: '宏观', poly: 0.31, kalshi: 0.29, chg: -4, vol24: 900000, vol: 12000000, liq: 800000, volChg: -8, flags: [] },
+      { id: 'temp-26', q: '2026 成为有记录以来最热年份？', cat: '气候', poly: 0.73, kalshi: 0.71, chg: 1, vol24: 650000, vol: 5000000, liq: 300000, volChg: 4, flags: [] },
+    ];
+    const markets = base.map((m) => {
+      const yesAvg = (m.poly + m.kalshi) / 2;
+      const spread = Math.round(Math.abs(m.poly - m.kalshi) * 100);
+      const seed = this.hash(m.id);
+      const hist = this.genHist(seed, yesAvg, 0.018, 80);
+      return { ...m, yesAvg, spread, hist };
+    });
+    return { markets };
+  }
+
+  fmtVol(v) {
+    if (v >= 1000000) return '$' + (v / 1000000).toFixed(1) + 'M';
+    if (v >= 1000) return '$' + Math.round(v / 1000) + 'K';
+    return '$' + v;
+  }
+  pct(v) { return (v * 100).toFixed(0) + '%'; }
+
+  // ---- charts ----
+  sparkline(hist, color, w, h) {
+    const slice = hist.slice(-28);
+    const min = Math.min(...slice), max = Math.max(...slice), rng = (max - min) || 1;
+    const pts = slice.map((v, i) => `${(i / (slice.length - 1) * w).toFixed(1)},${(h - ((v - min) / rng) * (h - 3) - 1.5).toFixed(1)}`).join(' ');
+    return React.createElement('svg', { width: w, height: h, viewBox: `0 0 ${w} ${h}`, style: { display: 'block', overflow: 'visible' } },
+      React.createElement('polyline', { points: pts, strokeWidth: 1.4, strokeLinejoin: 'round', strokeLinecap: 'round', style: { fill: 'none', stroke: color } }));
+  }
+
+  areaChart(hist, w, h) {
+    const slice = hist;
+    const min = Math.min(...slice) - 0.03, max = Math.max(...slice) + 0.03, rng = (max - min) || 1;
+    const X = (i) => (i / (slice.length - 1) * w);
+    const Y = (v) => (h - ((v - min) / rng) * h);
+    const line = slice.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
+    const area = `M0,${h} L` + slice.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' L') + ` L${w},${h} Z`;
+    // a second (kalshi) faint line offset
+    const k = slice.map((v) => v - 0.025);
+    const lineK = k.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
+    const grid = [0.25, 0.5, 0.75].map((g) => React.createElement('line', { key: g, x1: 0, x2: w, y1: g * h, y2: g * h, strokeWidth: 1, strokeDasharray: '3 4', style: { stroke: 'var(--bg4)' } }));
+    const last = slice[slice.length - 1];
+    return React.createElement('svg', { width: '100%', height: h, viewBox: `0 0 ${w} ${h}`, preserveAspectRatio: 'none', style: { display: 'block', overflow: 'visible' } },
+      React.createElement('defs', null,
+        React.createElement('linearGradient', { id: 'ag', x1: 0, y1: 0, x2: 0, y2: 1 },
+          React.createElement('stop', { offset: '0%', stopOpacity: 0.22, style: { stopColor: 'var(--poly)' } }),
+          React.createElement('stop', { offset: '100%', stopOpacity: 0, style: { stopColor: 'var(--poly)' } }))),
+      ...grid,
+      React.createElement('path', { d: area, fill: 'url(#ag)' }),
+      React.createElement('polyline', { points: lineK, strokeWidth: 1.4, strokeLinejoin: 'round', style: { fill: 'none', stroke: 'var(--kalshi)', strokeOpacity: 0.7 } }),
+      React.createElement('polyline', { points: line, strokeWidth: 2, strokeLinejoin: 'round', strokeLinecap: 'round', style: { fill: 'none', stroke: 'var(--poly)' } }),
+      React.createElement('circle', { cx: X(slice.length - 1), cy: Y(last), r: 3.5, style: { fill: 'var(--poly)' } }));
+  }
+
+  // ---- analysis generation ----
+  makeAnalysis(m) {
+    const yp = Math.round(m.yesAvg * 100);
+    const chg = Math.round(m.chg);
+    const absChg = Math.abs(chg);
+    const dir = chg >= 0 ? '上行' : '下行';
+    const analyst = `综合 Polymarket（${this.pct(m.poly)}）与 Kalshi（${this.pct(m.kalshi)}），合并 YES 隐含概率 ${yp}%，24h ${dir} ${absChg} pts，合并成交 ${this.fmtVol(m.vol24)}。两平台价差 ${m.spread}¢${m.spread >= 4 ? '，存在跨市场套利空间。' : '，定价基本一致。'}`;
+
+    const bull = [
+      `动量信号：概率 24h ${dir} ${absChg} pts，资金持续流入 ${chg >= 0 ? 'YES' : 'NO'} 侧，趋势尚未衰竭。`,
+      `成交结构：24h 成交较前日 ${m.volChg >= 0 ? '+' : ''}${m.volChg}%，新增流动性集中放大，确认了价格方向。`,
+      m.spread >= 4 ? `跨市场：Kalshi 较 Polymarket 低估 ${m.spread}¢，临近结算存在收敛动力。` : `估值：当前 ${yp}% 仍低于基本面情景隐含的概率，赔率具吸引力。`,
+    ];
+    const bear = [
+      `估值约束：YES 已计价 ${yp}%，${yp > 65 ? '继续上行空间有限，赔率不佳。' : '事件不确定性仍高，单边持有风险大。'}`,
+      `流动性：簿深 ${this.fmtVol(m.liq)}，大额成交滑点显著，难以按现价规模建仓。`,
+      m.spread >= 4 ? `价差可能源于两平台费用与结算口径差异，并非无风险套利。` : `近期 ${absChg} pts 的跳动缺乏新增信息支撑，存在情绪反转风险。`,
+    ];
+    const debate = [
+      { side: 'bull', text: bull[0] },
+      { side: 'bear', text: bear[0] },
+      { side: 'bull', text: bull[1] },
+      { side: 'bear', text: bear[1] },
+      { side: 'bull', text: bull[2] },
+      { side: 'bear', text: bear[2] },
+    ];
+
+    // decision tree
+    let signal, signalEn, color, confidence, side, size, reasons, risks;
+    if (m.spread >= 4) {
+      signal = '套利'; signalEn = 'ARBITRAGE'; color = 'var(--accent)'; confidence = 78;
+      side = `Kalshi 买 YES / Poly 卖 YES`; size = '中性对冲';
+      reasons = [`两平台价差 ${m.spread}¢ 显著高于历史均值，临近事件窗口具收敛预期。`, `双边建仓后净敞口接近零，主要赚取价差收敛。`, `成交活跃（${this.fmtVol(m.vol24)}），可分批建立对冲头寸。`];
+      risks = [`结算口径或费用差异可能侵蚀部分价差收益。`, `单边流动性不足时对冲腿可能无法同时成交。`];
+    } else if (chg >= 5 && yp < 70) {
+      signal = '买入 YES'; signalEn = 'BUY YES'; color = 'var(--up)'; confidence = 64;
+      side = 'YES'; size = '轻仓试探';
+      reasons = [`概率 24h 上行 ${absChg} pts 且成交放大 ${m.volChg}%，动量与量能共振。`, `当前 ${yp}% 距离完全计价仍有空间，赔率合理。`, `多空辩论中看多论据未被有效反驳。`];
+      risks = [`动量交易回撤风险高，需设概率止损（如回落至 ${Math.max(0, yp - 8)}%）。`, `簿深较薄，建议分批且控制单笔规模。`];
+    } else if (chg <= -5) {
+      signal = '买入 NO'; signalEn = 'BUY NO'; color = 'var(--down)'; confidence = 60;
+      side = 'NO'; size = '轻仓试探';
+      reasons = [`概率 24h 下行 ${absChg} pts，资金流出 YES 侧，趋势走弱。`, `当前 ${yp}% 仍高于看空情景隐含概率，存在下修空间。`];
+      risks = [`事件型标的易受突发消息反转，需控制仓位。`, `临近结算时间价值衰减加速。`];
+    } else if (yp >= 78) {
+      signal = '观望'; signalEn = 'HOLD'; color = 'var(--amber)'; confidence = 52;
+      side = '不建仓'; size = '0';
+      reasons = [`YES 已高度计价（${yp}%），剩余赔率不足以覆盖尾部风险。`, `近期波动 ${absChg} pts 在噪声区间，无明确边际信息。`];
+      risks = [`高概率标的的反转虽小概率但损失幅度大。`];
+    } else {
+      signal = '观望'; signalEn = 'HOLD'; color = 'var(--amber)'; confidence = 48;
+      side = '不建仓'; size = '0';
+      reasons = [`多空论据强度相当，无显著定价错位。`, `价差 ${m.spread}¢ 与成交变化 ${m.volChg}% 均在正常区间。`];
+      risks = [`等待概率突破或成交异常再行介入。`];
+    }
+    return { analyst, debate, verdict: { signal, signalEn, color, confidence, side, size, reasons, risks } };
+  }
+
+  // ---- handlers ----
+  go(screen) { this.setState({ screen }); }
+  selectMarket(id) { this.setState({ screen: 'detail', selectedId: id, agentStep: 6, agentRunning: false, revealed: 99 }); }
+  openAgent(id) { this.setState({ screen: 'agent', selectedId: id }); }
+
+  runAgent() {
+    if (this.state.agentRunning) return;
+    this._timers.forEach(clearTimeout); this._timers = [];
+    const m = this.data.markets.find((x) => x.id === this.state.selectedId);
+    const an = this.makeAnalysis(m);
+    const total = an.debate.length;
+    this.setState({ agentRunning: true, agentStep: 1, revealed: 0 });
+    [2, 3].forEach((s, i) => this._timers.push(setTimeout(() => this.setState({ agentStep: s }), 350 * (i + 1))));
+    for (let k = 1; k <= total; k++) {
+      this._timers.push(setTimeout(() => this.setState({ revealed: k, agentStep: 3 }), 700 + k * 620));
+    }
+    this._timers.push(setTimeout(() => this.setState({ agentStep: 4 }), 700 + total * 620 + 200));
+    this._timers.push(setTimeout(() => this.setState({ agentStep: 5 }), 700 + total * 620 + 500));
+    this._timers.push(setTimeout(() => this.setState({ agentRunning: false, agentStep: 6 }), 700 + total * 620 + 900));
+  }
+
+  // ---- derived view ----
+  marketView(m) {
+    const chgColor = m.chg > 0 ? 'var(--up)' : m.chg < 0 ? 'var(--down)' : 'var(--text-3)';
+    const chgText = (m.chg > 0 ? '+' : '') + m.chg + ' pts';
+    const spreadColor = m.spread >= 4 ? 'var(--accent)' : 'var(--text-mid)';
+    const badgeMap = {
+      spread: { label: 'ARB', full: '套利价差', bg: 'var(--tint-clay)', fg: 'var(--accent)' },
+      jump: { label: 'JMP', full: '概率跳动', bg: 'var(--tint-amber)', fg: 'var(--amber)' },
+      volume: { label: 'VOL', full: '成交放量', bg: 'var(--tint-teal)', fg: 'var(--kalshi)' },
+      new: { label: 'NEW', full: '新市场', bg: 'var(--tint-purple)', fg: 'var(--purple)' },
+    };
+    return {
+      ...m,
+      yesPct: this.pct(m.yesAvg),
+      polyPct: this.pct(m.poly),
+      kalshiPct: this.pct(m.kalshi),
+      chgColor, chgText, spreadColor,
+      spreadText: m.spread + '¢',
+      volText: this.fmtVol(m.vol24),
+      badges: m.flags.map((f) => badgeMap[f]),
+      spark: this.sparkline(m.hist, chgColor, 52, 18),
+      sparkBig: this.sparkline(m.hist, chgColor, 96, 32),
+      onOpen: () => this.selectMarket(m.id),
+    };
+  }
+
+  buildSignals() {
+    const out = [];
+    const times = ['1分钟前', '4分钟前', '8分钟前', '12分钟前', '19分钟前', '26分钟前', '38分钟前'];
+    const conf = {
+      spread: { type: 'ARBITRAGE 套利', ico: '⇄', fg: 'var(--accent)', bg: 'var(--tint-clay)' },
+      jump: { type: 'PROB JUMP 跳动', ico: '↗', fg: 'var(--amber)', bg: 'var(--tint-amber)' },
+      volume: { type: 'VOLUME 放量', ico: '◆', fg: 'var(--kalshi)', bg: 'var(--tint-teal)' },
+      new: { type: 'NEW MARKET 新市场', ico: '＋', fg: 'var(--purple)', bg: 'var(--tint-purple)' },
+    };
+    let t = 0;
+    this.data.markets.forEach((m) => {
+      m.flags.forEach((f) => {
+        const c = conf[f];
+        let metric, detail;
+        if (f === 'spread') { metric = m.spread + '¢'; detail = `Polymarket ${this.pct(m.poly)} 对 Kalshi ${this.pct(m.kalshi)}，价差超阈值，存在跨平台套利机会。`; }
+        else if (f === 'jump') { metric = (m.chg >= 0 ? '+' : '') + m.chg + 'pts'; detail = `2 小时内 YES 概率${m.chg >= 0 ? '快速抬升' : '快速回落'} ${Math.abs(m.chg)} 个百分点，偏离近期均值。`; }
+        else if (f === 'volume') { metric = (m.volChg >= 0 ? '+' : '') + m.volChg + '%'; detail = `24h 成交较前日放大 ${m.volChg}%，资金异动，关注方向确认。`; }
+        else { metric = 'NEW'; detail = `新挂牌市场，初期流动性 ${this.fmtVol(m.liq)}，定价尚未充分。`; }
+        out.push({
+          ...c, id: m.id, q: m.q, cat: m.cat, metric, detail,
+          time: times[t % times.length],
+          spark: this.sparkline(m.hist, c.fg, 64, 22),
+          onOpen: () => this.openAgent(m.id),
+        });
+        t++;
+      });
+    });
+    return out;
+  }
+
+  navStyle(active) {
+    return `display: flex; align-items: center; gap: 11px; padding: 9px 10px; border-radius: 9px; border: none; cursor: pointer; font-size: 13px; font-family: 'IBM Plex Sans', sans-serif; width: 100%; ${active ? 'background: var(--bg4); color: var(--text-hi); font-weight: 600;' : 'background: transparent; color: var(--text-3); font-weight: 500;'}`;
+  }
+  chipStyle(active) {
+    return `font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 6px 12px; border-radius: 8px; cursor: pointer; background: ${active ? 'var(--accent)' : 'var(--bg2)'}; color: ${active ? 'var(--bg2)' : 'var(--text-3)'}; border: 1px solid ${active ? 'var(--accent)' : 'var(--border)'}; font-weight: ${active ? 600 : 400};`;
+  }
+  segStyle(active) {
+    return `font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 5px 11px; border-radius: 6px; cursor: pointer; border: none; background: ${active ? 'var(--border2)' : 'transparent'}; color: ${active ? 'var(--text-hi)' : 'var(--text-mid)'}; font-weight: ${active ? 600 : 400};`;
+  }
+  rangeStyle(active) {
+    return `font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 4px 9px; border-radius: 5px; cursor: pointer; border: none; background: ${active ? 'var(--border2)' : 'transparent'}; color: ${active ? 'var(--text-hi)' : 'var(--text-low)'};`;
+  }
+
+  renderVals() {
+    const st = this.state;
+    const clockTime = '14:32:0' + (Math.floor(Date.now() / 1000) % 6);
+    const allMarkets = this.data.markets.map((m) => this.marketView(m));
+    const catMap = { macro: ['宏观利率', '宏观'], crypto: ['加密资产'], politics: ['政治'], tech: ['科技', '股票'] };
+    let markets = allMarkets;
+    if (st.filter !== 'all') {
+      const cats = catMap[st.filter] || [];
+      markets = allMarkets.filter((m) => cats.includes(m.cat));
+    }
+
+    const sel = this.marketView(this.data.markets.find((m) => m.id === st.selectedId));
+    // detail extras
+    sel.polyW = this.pct(sel.poly);
+    sel.kalshiW = this.pct(sel.kalshi);
+    sel.spreadBoxBg = sel.spread >= 4 ? 'var(--tint-clay)' : 'var(--bg1)';
+    sel.spreadNote = sel.spread >= 4 ? '价差超过 4¢ 触发套利信号，建议双边对冲建仓。' : '两平台定价基本一致，无显著套利空间。';
+    sel.stats = [
+      { label: '合并 24h 成交', value: this.fmtVol(sel.vol24), color: 'var(--text-hi)' },
+      { label: '累计成交额', value: this.fmtVol(sel.vol), color: 'var(--text-hi)' },
+      { label: '簿内流动性', value: this.fmtVol(sel.liq), color: 'var(--text-hi)' },
+      { label: '24h 成交变化', value: (sel.volChg >= 0 ? '+' : '') + sel.volChg + '%', color: sel.volChg >= 0 ? 'var(--up)' : 'var(--down)' },
+      { label: '24h 概率变化', value: sel.chgText, color: sel.chgColor },
+    ];
+
+    let dh = sel.hist;
+    const rmap = { '1H': 8, '6H': 20, '1D': 40, '1W': 64, 'ALL': 80 };
+    dh = sel.hist.slice(-(rmap[st.range] || 80));
+    const detailChart = this.areaChart(dh, 640, 240);
+
+    // agent
+    const an = this.makeAnalysis(this.data.markets.find((m) => m.id === st.selectedId));
+    const debateAll = an.debate;
+    const revealedDebate = debateAll.slice(0, Math.min(st.revealed, debateAll.length));
+    const roleSummaries = {
+      analyst: an.analyst,
+      bull: an.debate.filter((d) => d.side === 'bull')[0].text,
+      bear: an.debate.filter((d) => d.side === 'bear')[0].text,
+      trader: `综合多空论证，给出结构化判断：${an.verdict.signal}（置信度 ${an.verdict.confidence}%）。详见右侧决策卡。`,
+    };
+    const roles = [
+      { name: '分析师', role: 'ANALYST', ico: 'A', bg: 'var(--tint-blue)', fg: 'var(--poly)', border: 'var(--border)', tag: '数据', summary: roleSummaries.analyst },
+      { name: '看多研究员', role: 'BULL', ico: '▲', bg: 'var(--tint-green)', fg: 'var(--up)', border: 'var(--border)', tag: 'LONG', summary: roleSummaries.bull },
+      { name: '看空研究员', role: 'BEAR', ico: '▼', bg: 'var(--tint-red)', fg: 'var(--down)', border: 'var(--border)', tag: 'SHORT', summary: roleSummaries.bear },
+      { name: '交易员', role: 'TRADER', ico: '◆', bg: 'var(--tint-clay)', fg: 'var(--accent)', border: 'var(--tint-clay)', tag: '决策', summary: roleSummaries.trader },
+    ];
+    const debate = revealedDebate.map((d) => {
+      const bull = d.side === 'bull';
+      return {
+        ...d,
+        dir: 'row',
+        name: bull ? '看多研究员' : '看空研究员',
+        ico: bull ? '▲' : '▼',
+        bg: bull ? 'var(--tint-green)' : 'var(--tint-red)',
+        fg: bull ? 'var(--up)' : 'var(--down)',
+        bubbleBg: bull ? 'var(--bubble-bull)' : 'var(--bubble-bear)',
+        bubbleBorder: bull ? 'var(--bubble-bull-bd)' : 'var(--bubble-bear-bd)',
+      };
+    });
+    const pipeLabels = ['数据采集', '分析师', '多空辩论', '交易员', '风控', '决策'];
+    const pipeline = pipeLabels.map((label, i) => {
+      const n = i + 1;
+      const done = st.agentStep > n;
+      const active = st.agentStep === n;
+      return {
+        label, n: done ? '✓' : String(n),
+        bg: done ? 'var(--tint-green)' : active ? 'var(--tint-clay)' : 'var(--bg4)',
+        fg: done ? 'var(--up)' : active ? 'var(--accent)' : 'var(--text-low)',
+        txt: active ? 'var(--text-hi)' : done ? 'var(--text-3)' : 'var(--text-low)',
+        weight: active ? 600 : 400,
+        line: done ? 'var(--pipe-done-line)' : 'var(--border)',
+        arrow: i < pipeLabels.length - 1,
+      };
+    });
+    const v = an.verdict;
+    const verdict = {
+      ...v,
+      confidence: v.confidence + '%',
+      confW: v.confidence + '%',
+      border: v.color,
+      headBg: 'var(--bg1)',
+    };
+
+    const railSignals = this.buildSignals().slice(0, 6);
+    let feedSignals = this.buildSignals();
+    const sfMap = { spread: 'ARBITRAGE 套利', jump: 'PROB JUMP 跳动', volume: 'VOLUME 放量', new: 'NEW MARKET 新市场' };
+    if (st.sigFilter !== 'all') feedSignals = feedSignals.filter((s) => s.type === sfMap[st.sigFilter]);
+
+    const headerMap = {
+      dashboard: ['市场总览', `${allMarkets.length} 个活跃标的 · Polymarket × Kalshi 聚合`],
+      detail: ['标的详情', sel.q],
+      agent: ['Agent 分析', 'TradingAgents 架构 · 多智能体协作判断'],
+      signals: ['异常信号', '实时监控 · 套利 / 跳动 / 放量 / 新市场'],
+    };
+
+    const navItems = [
+      { key: 'dashboard', label: '市场总览', ico: '▦' },
+      { key: 'detail', label: '标的详情', ico: '◷' },
+      { key: 'agent', label: 'Agent 分析', ico: '◆', badge: 'AI' },
+      { key: 'signals', label: '异常信号', ico: '⚡', badge: String(this.buildSignals().length) },
+    ];
+
+    return {
+      theme: st.theme,
+      toggleTheme: () => this.toggleTheme(),
+      themeIcon: st.theme === 'dark' ? '☀' : '☾',
+      themeLabel: st.theme === 'dark' ? '浅色' : '深色',
+      clock: clockTime,
+      marketCount: allMarkets.length,
+      signalCount: this.buildSignals().length,
+      headerTitle: headerMap[st.screen][0],
+      headerSub: headerMap[st.screen][1],
+
+      nav: navItems.map((n) => ({
+        label: n.label, ico: n.ico, badge: n.badge || '',
+        style: this.navStyle(st.screen === n.key),
+        icoColor: st.screen === n.key ? 'var(--accent)' : 'var(--text-low)',
+        go: () => this.go(n.key),
+      })),
+
+      isDashboard: st.screen === 'dashboard',
+      isDetail: st.screen === 'detail',
+      isAgent: st.screen === 'agent',
+      isSignals: st.screen === 'signals',
+
+      kpis: [
+        { label: '聚合标的', value: String(allMarkets.length), delta: '2 个新挂牌', deltaColor: 'var(--purple)' },
+        { label: '24h 总成交', value: '$83.5M', delta: '+18.4% vs 昨日', deltaColor: 'var(--up)' },
+        { label: '活跃套利信号', value: '4', delta: '价差 ≥ 4¢', deltaColor: 'var(--accent)' },
+        { label: '概率异动', value: '5', delta: '|Δ| ≥ 5 pts / 2h', deltaColor: 'var(--amber)' },
+      ],
+
+      filters: [
+        { key: 'all', label: '全部' }, { key: 'macro', label: '宏观' }, { key: 'crypto', label: '加密' }, { key: 'politics', label: '政治' }, { key: 'tech', label: '科技股' },
+      ].map((f) => ({ label: f.label, style: this.chipStyle(st.filter === f.key), go: () => this.setState({ filter: f.key }) })),
+
+      setLayoutA: () => this.setState({ layout: 'A' }),
+      setLayoutB: () => this.setState({ layout: 'B' }),
+      layoutAStyle: this.segStyle(st.layout === 'A'),
+      layoutBStyle: this.segStyle(st.layout === 'B'),
+      isLayoutA: st.layout === 'A',
+      isLayoutB: st.layout === 'B',
+
+      markets,
+      railSignals,
+
+      goDashboard: () => this.go('dashboard'),
+      goDetail: () => this.go('detail'),
+      goAgentFromDetail: () => this.openAgent(st.selectedId),
+      sel,
+      ranges: ['1H', '6H', '1D', '1W', 'ALL'].map((r) => ({ label: r, style: this.rangeStyle(st.range === r), go: () => this.setState({ range: r }) })),
+      detailChart,
+
+      runAgent: () => this.runAgent(),
+      runBtnLabel: st.agentRunning ? '运行中…' : '↻ 重新运行',
+      runBtnStyle: `background: ${st.agentRunning ? 'var(--border2)' : 'var(--accent)'}; border: none; color: ${st.agentRunning ? 'var(--text-3)' : 'var(--bg2)'}; font-weight: 600; font-size: 12px; padding: 9px 16px; border-radius: 8px; cursor: ${st.agentRunning ? 'default' : 'pointer'}; font-family: 'IBM Plex Sans', sans-serif; flex-shrink: 0;`,
+      agentRunning: st.agentRunning,
+      pipeline, roles, debate,
+      debateRounds: 3,
+      verdict,
+
+      sigFilters: [
+        { key: 'all', label: '全部信号' }, { key: 'spread', label: '套利价差' }, { key: 'jump', label: '概率跳动' }, { key: 'volume', label: '成交放量' }, { key: 'new', label: '新市场' },
+      ].map((f) => ({ label: f.label, style: this.chipStyle(st.sigFilter === f.key), go: () => this.setState({ sigFilter: f.key }) })),
+      feedSignals,
+    };
+  }
+}
+</script>
+
+
+
+</body></html>

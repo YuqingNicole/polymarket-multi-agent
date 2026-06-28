@@ -3,6 +3,8 @@
 
 # Node
 node_modules/
+.npm-cache/
+/.next-build.log
 npm-debug.log*
 yarn-error.log*
 
