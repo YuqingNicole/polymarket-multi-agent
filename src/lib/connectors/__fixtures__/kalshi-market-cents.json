@@ -1,0 +1,17 @@
+{
+  "ticker": "RAINNYC-26JUL04",
+  "event_ticker": "RAINNYC",
+  "title": "Will it rain in NYC on July 4, 2026?",
+  "yes_sub_title": "Rain in NYC",
+  "yes_bid": 60,
+  "yes_ask": 64,
+  "no_bid": 36,
+  "no_ask": 40,
+  "last_price": 62,
+  "volume": 250000,
+  "volume_24h": 12000,
+  "open_interest": 45000,
+  "close_time": "2026-07-04T23:59:59Z",
+  "status": "open",
+  "category": "Weather"
+}

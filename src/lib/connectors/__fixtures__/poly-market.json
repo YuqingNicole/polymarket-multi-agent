@@ -1,0 +1,14 @@
+{
+  "conditionId": "0xabc123condition",
+  "question": "Will it rain in NYC on July 4, 2026?",
+  "outcomes": "[\"Yes\", \"No\"]",
+  "outcomePrices": "[\"0.62\", \"0.38\"]",
+  "clobTokenIds": "[\"111111111\", \"222222222\"]",
+  "volume": "1500000.5",
+  "volume24hr": "84000.25",
+  "liquidity": "32000",
+  "endDate": "2026-07-04T23:59:59Z",
+  "category": "Weather",
+  "active": true,
+  "closed": false
+}

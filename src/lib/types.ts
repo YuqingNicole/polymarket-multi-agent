@@ -52,6 +52,7 @@ export interface AgentVerdict {
   marketId: string
   source: Source
   engine: 'deterministic' | 'llm'
+  // normalized fields (persisted to agent_runs)
   direction: Direction
   sizePct: number // 0..100
   confidence: number // 0..1
@@ -60,4 +61,13 @@ export interface AgentVerdict {
   bearCase: string
   riskNotes: string
   debate: DebateTurn[]
+  // presentation fields (terminal UI renders these verbatim, prototype-shaped)
+  signal: string // 中文标签: '买入 YES' / '套利' / '观望' ...
+  signalEn: string // 'BUY YES' / 'ARBITRAGE' / 'HOLD' ...
+  side: string // 建议方向文本
+  sizeLabel: string // 建议仓位文本
+  analyst: string // 分析师综述
+  reasons: string[] // 核心理由
+  risks: string[] // 风控提示
+  colorVar: string // CSS 变量 token, e.g. 'var(--up)'
 }
