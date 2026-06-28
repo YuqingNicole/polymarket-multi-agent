@@ -1,0 +1,5 @@
+/* Prototype design tokens + base styles are injected here during the UI port.
+   Minimal baseline for now. */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body { background: #14120e; color: #e8e3d8; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }

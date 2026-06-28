@@ -34,6 +34,15 @@ function ticksFor(source: 'poly' | 'kalshi', m: PrototypeMarket, now: number): M
   const target = source === 'poly' ? m.poly : m.kalshi
   const seed = hash(`${source}-${m.id}`)
   const probs = genHist(seed, target, 0.018, N)
+  // Bake the prototype's 24h probability change so the real analysis layer
+  // recovers `chg` (the first tick sits chg points below the target).
+  probs[0] = Math.max(0.03, Math.min(0.97, target - m.chg / 100))
+  // The prototype figures are the merged (cross-venue) totals; split them
+  // across the two venues so the board's poly+kalshi sum matches the prototype.
+  const v24 = m.vol24 / 2
+  const vTot = m.vol / 2
+  // Volume series so volumeChangePct() recovers the prototype's `volChg`.
+  const vol0 = v24 / (1 + m.volChg / 100)
   const out: MarketTick[] = []
   for (let i = 0; i < N; i++) {
     const ts = new Date(now - (N - 1 - i) * STEP_MS).toISOString()
@@ -42,8 +51,8 @@ function ticksFor(source: 'poly' | 'kalshi', m: PrototypeMarket, now: number): M
       source,
       marketId: `${source}-${m.id}`,
       yesProb: probs[i],
-      volume24h: Math.round(m.vol24 * (0.85 + 0.3 * frac)),
-      volumeTotal: Math.round(m.vol - m.vol24 * (1 - frac)),
+      volume24h: Math.round(vol0 + (v24 - vol0) * frac),
+      volumeTotal: Math.round(vTot - v24 * (1 - frac)),
       ts,
     })
   }
