@@ -114,6 +114,36 @@
   .conns span{font-size:10.5px;color:var(--text-mid);font-family:'IBM Plex Mono',monospace}
   .conns b{color:var(--accent);font-weight:600}
 
+  /* ER diagram */
+  .er-hub-wrap{display:flex;justify-content:center}
+  .entity{background:var(--bg2);border:1px solid var(--border);border-radius:11px;overflow:hidden;width:100%}
+  .entity.hub{max-width:330px;border-color:var(--accent-hi)}
+  .entity .eh{background:var(--bg3);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .entity.hub .eh{background:var(--tint-clay)}
+  .entity .eh .nm{font-size:13px;font-weight:600;letter-spacing:-.2px}
+  .entity .eh .ph{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-low2)}
+  .fields{padding:5px 0}
+  .field{display:grid;grid-template-columns:30px 1fr auto;gap:8px;align-items:center;padding:2.5px 12px;font-size:11px}
+  .field .k{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;text-align:center;border-radius:3px;padding:1px 0}
+  .field .fn{color:var(--text-2)}
+  .field.pk .fn{color:var(--text-hi);font-weight:600}
+  .field .ft{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--text-low)}
+  .k.pk{color:var(--accent);background:var(--tint-clay)} .k.uq{color:var(--poly);background:var(--tint-blue)} .k.ix{color:var(--kalshi);background:var(--tint-teal)} .k.fk{color:var(--purple)}
+  .fan{position:relative;height:34px;margin:2px 0}
+  .fan i{position:absolute;background:var(--border3)}
+  .fan .v0{left:50%;top:0;width:1.5px;height:12px;transform:translateX(-50%)}
+  .fan .hb{left:16.67%;right:16.67%;top:11px;height:1.5px}
+  .fan .d{top:11px;width:1.5px;height:23px}
+  .fan .d1{left:16.67%}.fan .d2{left:50%;transform:translateX(-50%)}.fan .d3{left:83.33%}
+  .fan .card-note,.er-note{position:absolute;left:50%;top:-9px;transform:translateX(-50%);background:var(--bg1);padding:0 9px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--accent);white-space:nowrap}
+  .er-children{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start}
+  .er-pairs{margin-top:22px;display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:center}
+  .er-pairs .rels{display:flex;flex-direction:column;gap:10px}
+  .er-pairs .rels .r{display:flex;align-items:center;gap:9px;font-size:11px;color:var(--text-mid)}
+  .er-pairs .rels .r .m{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--purple)}
+  .er-pairs .rels .r .arr{font-family:'IBM Plex Mono',monospace;color:var(--text-low)}
+  @media(max-width:880px){.er-children{grid-template-columns:1fr}.er-pairs{grid-template-columns:1fr}}
+
   footer{color:var(--text-low);font-size:11px;font-family:'IBM Plex Mono',monospace;border-top:1px solid var(--border);padding-top:18px;margin-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 </style>
 </head>
@@ -447,6 +477,108 @@
         <span>服务 ⇄ Postgres &nbsp;<b>TCP :5544 (Prisma)</b></span>
         <span>Worker → 交易所 &nbsp;<b>WSS / HTTPS</b></span>
         <span>Agent / 配对 → OpenRouter &nbsp;<b>HTTPS</b></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ER 数据模型图 ===================== -->
+  <section>
+    <div class="sec-head"><h2>ER 数据模型图</h2><span class="tag">Data Model</span></div>
+    <p class="sec-desc">Prisma / PostgreSQL 五张表。<b>markets</b> 是中心实体,以自然键 <span class="mono">(source, marketId)</span> 被 <b>ticks</b>(时序)/<b>signals</b>/<b>agent_runs</b> 逻辑引用(1:N);<b>market_pairs</b> 关联同一事件的两侧市场。为时序写入性能采用去规范化,关系为逻辑关联(无强制外键)。</p>
+
+    <div class="diagram">
+      <!-- hub: markets -->
+      <div class="er-hub-wrap">
+        <div class="entity hub">
+          <div class="eh"><span class="nm">Market</span><span class="ph">markets</span></div>
+          <div class="fields">
+            <div class="field pk"><span class="k pk">PK</span><span class="fn">id</span><span class="ft">String · cuid</span></div>
+            <div class="field"><span class="k uq">UQ</span><span class="fn">source</span><span class="ft">String</span></div>
+            <div class="field"><span class="k uq">UQ</span><span class="fn">marketId</span><span class="ft">String</span></div>
+            <div class="field"><span class="k"></span><span class="fn">title</span><span class="ft">String</span></div>
+            <div class="field"><span class="k"></span><span class="fn">category</span><span class="ft">String?</span></div>
+            <div class="field"><span class="k"></span><span class="fn">endDate</span><span class="ft">DateTime?</span></div>
+            <div class="field"><span class="k"></span><span class="fn">outcomes</span><span class="ft">String[]</span></div>
+            <div class="field"><span class="k"></span><span class="fn">polyClobTokenIds</span><span class="ft">String[]</span></div>
+            <div class="field"><span class="k"></span><span class="fn">kalshiEventTicker</span><span class="ft">String?</span></div>
+            <div class="field"><span class="k"></span><span class="fn">createdAt · updatedAt</span><span class="ft">DateTime</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- fan 1:N -->
+      <div class="fan">
+        <span class="card-note">1 ──&lt; N · 关联键 (source, marketId)</span>
+        <i class="v0"></i><i class="hb"></i><i class="d d1"></i><i class="d d2"></i><i class="d d3"></i>
+      </div>
+
+      <!-- children -->
+      <div class="er-children">
+        <div class="entity">
+          <div class="eh"><span class="nm">Tick</span><span class="ph">ticks</span></div>
+          <div class="fields">
+            <div class="field pk"><span class="k pk">PK</span><span class="fn">id</span><span class="ft">BigInt</span></div>
+            <div class="field"><span class="k ix">#</span><span class="fn">source</span><span class="ft">String</span></div>
+            <div class="field"><span class="k ix">#</span><span class="fn">marketId</span><span class="ft">String</span></div>
+            <div class="field"><span class="k"></span><span class="fn">yesProb</span><span class="ft">Float</span></div>
+            <div class="field"><span class="k"></span><span class="fn">volume24h</span><span class="ft">Float</span></div>
+            <div class="field"><span class="k"></span><span class="fn">volumeTotal</span><span class="ft">Float</span></div>
+            <div class="field"><span class="k ix">#</span><span class="fn">ts</span><span class="ft">DateTime</span></div>
+          </div>
+        </div>
+        <div class="entity">
+          <div class="eh"><span class="nm">Signal</span><span class="ph">signals</span></div>
+          <div class="fields">
+            <div class="field pk"><span class="k pk">PK</span><span class="fn">id</span><span class="ft">String</span></div>
+            <div class="field"><span class="k"></span><span class="fn">source</span><span class="ft">String</span></div>
+            <div class="field"><span class="k ix">#</span><span class="fn">marketId</span><span class="ft">String</span></div>
+            <div class="field"><span class="k"></span><span class="fn">kind</span><span class="ft">String</span></div>
+            <div class="field"><span class="k"></span><span class="fn">severity</span><span class="ft">Float</span></div>
+            <div class="field"><span class="k"></span><span class="fn">detail</span><span class="ft">String</span></div>
+            <div class="field"><span class="k ix">#</span><span class="fn">ts</span><span class="ft">DateTime</span></div>
+          </div>
+        </div>
+        <div class="entity">
+          <div class="eh"><span class="nm">AgentRun</span><span class="ph">agent_runs</span></div>
+          <div class="fields">
+            <div class="field pk"><span class="k pk">PK</span><span class="fn">id</span><span class="ft">String</span></div>
+            <div class="field"><span class="k ix">#</span><span class="fn">source</span><span class="ft">String</span></div>
+            <div class="field"><span class="k ix">#</span><span class="fn">marketId</span><span class="ft">String</span></div>
+            <div class="field"><span class="k"></span><span class="fn">engine · direction</span><span class="ft">String</span></div>
+            <div class="field"><span class="k"></span><span class="fn">sizePct · confidence</span><span class="ft">Float</span></div>
+            <div class="field"><span class="k"></span><span class="fn">rationale · bull/bear · risk</span><span class="ft">String</span></div>
+            <div class="field"><span class="k"></span><span class="fn">raw</span><span class="ft">Json</span></div>
+            <div class="field"><span class="k ix">#</span><span class="fn">createdAt</span><span class="ft">DateTime</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- market_pairs -->
+      <div class="er-pairs">
+        <div class="rels">
+          <div class="r"><span class="arr">polyMarketId&nbsp;──&gt;</span> <span class="m">Market.marketId</span> <span class="ft" style="font-size:10px;color:var(--poly)">(poly · N:1)</span></div>
+          <div class="r"><span class="arr">kalshiMarketId&nbsp;──&gt;</span> <span class="m">Market.marketId</span> <span class="ft" style="font-size:10px;color:var(--kalshi)">(kalshi · N:1)</span></div>
+          <div class="r" style="color:var(--text-low);font-size:10.5px">同一现实事件 → 合并 YES 隐含概率 / 套利价差</div>
+        </div>
+        <div class="entity">
+          <div class="eh"><span class="nm">MarketPair</span><span class="ph">market_pairs</span></div>
+          <div class="fields">
+            <div class="field pk"><span class="k pk">PK</span><span class="fn">id</span><span class="ft">String</span></div>
+            <div class="field"><span class="k uq">UQ</span><span class="fn">polyMarketId</span><span class="ft">String</span></div>
+            <div class="field"><span class="k uq">UQ</span><span class="fn">kalshiMarketId</span><span class="ft">String</span></div>
+            <div class="field"><span class="k"></span><span class="fn">confidence</span><span class="ft">Float</span></div>
+            <div class="field"><span class="k"></span><span class="fn">source</span><span class="ft">curated|llm</span></div>
+            <div class="field"><span class="k"></span><span class="fn">mergedYesProb</span><span class="ft">Float?</span></div>
+            <div class="field"><span class="k"></span><span class="fn">createdAt</span><span class="ft">DateTime</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span><span class="k pk" style="padding:1px 4px">PK</span>主键</span>
+        <span><span class="k uq" style="padding:1px 4px">UQ</span>唯一约束</span>
+        <span><span class="k ix" style="padding:1px 4px">#</span>索引</span>
+        <span style="color:var(--text-low)">关系为逻辑关联(去规范化 · 无强制外键)</span>
       </div>
     </div>
   </section>
