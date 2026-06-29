@@ -119,7 +119,11 @@ describe('normalizeKalshiTick', () => {
 describe('fetchPolyMarkets', () => {
   it('GETs the gamma markets endpoint and normalizes the list', async () => {
     const fetchImpl = vi.fn(async (url: any) => {
-      expect(String(url)).toContain('/markets?closed=false&limit=5')
+      const u = String(url)
+      expect(u).toContain('/markets?')
+      expect(u).toContain('closed=false')
+      expect(u).toContain('order=volume24hr')
+      expect(u).toContain('limit=5')
       return fakeResponse([polyMarket])
     }) as unknown as typeof fetch
 

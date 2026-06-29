@@ -92,6 +92,23 @@ node docs/prototype/shoot.mjs both # 重新生成对比截图(需先 npx playwri
 - 证据截图:`docs/prototype/shots/port-agent-llm.png`(抓到分阶段动画进行中)。
 - 验证后已把 `.env` 的 `AGENT_ENGINE` 调回默认 `deterministic`(零成本/可复现);随时改回 `llm` 即用真实大模型。
 
+## 6c. Live 模式真实交易所压测(已验证 ✅,有修复+发现)
+
+`DATA_SOURCE=live` 直连真实交易所,32s 实测:
+- **吞吐**:Polymarket WS(零鉴权)+ Kalshi REST 轮询 → 归一化 → 落库,**40 poly + 200 kalshi 市场,
+  61 poly WS ticks + 700 kalshi ticks**,零崩溃、零限流错误。端到端 live 链路通。
+- **修复 1**:Kalshi 当前 API 已弃用分计价字段(`volume`/`volume_24h` 全 undefined),改读 `volume_fp`/
+  `volume_24h_fp`(归一化器已修,兼容旧名)。
+- **修复 2**:`fetchPolyMarkets` 默认按 `order=volume24hr` 拉取,得到活跃高成交市场(否则默认返回冷门市场)。
+
+**诚实发现(live 的真实局限,留作下一步)**:
+- **Kalshi 默认 `status=open` 返回的多是多元 `KXMVE*` 体育市场**,无单一 yes 价(归一化后 yesProb=0,不崩但无意义),
+  500 个里仅 11 个有成交。要拿到优质二元市场需按 series 过滤——live 数据选择需调优。
+- **两家真实市场几乎不重叠**(Poly 有"Rihanna 新专",Kalshi 是多元体育),所以跨平台配对/套利视图在 live 下天然稀疏;
+  且 `startLive` 暂未跑 LLM 配对器 → live 模式 board(按 pairs 聚合)为空、UI 回退到原型数据。
+  单平台数据(市场/价格/单市场信号)在 live 下正常流动。
+- 结论:**live 摄取管道生产可用**;要让 live 模式的 UI 也丰富,下一步是接 live 跨平台配对 + 优化 Kalshi 选市。
+
 ## 7. 仍留白 / 你可定夺(诚实记录)
 - **live 模式压测**:真实 Polymarket WS + Kalshi 轮询代码已实现并配 fixture 单测,但沙箱内未长连真实交易所
   压测;`DATA_SOURCE=live` 可切换试。

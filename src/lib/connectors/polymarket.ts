@@ -16,7 +16,8 @@ export async function fetchPolyMarkets(
 ): Promise<MarketMeta[]> {
   const limit = opts.limit ?? 100
   const f = opts.fetchImpl ?? fetch
-  const url = `${config.POLYMARKET_GAMMA_URL}/markets?closed=false&limit=${limit}`
+  // Order by 24h volume so we ingest liquid, actively-trading markets.
+  const url = `${config.POLYMARKET_GAMMA_URL}/markets?closed=false&active=true&order=volume24hr&ascending=false&limit=${limit}`
 
   const res = await f(url)
   if (!res.ok) {

@@ -130,8 +130,9 @@ export function normalizeKalshiTick(raw: any): MarketTick {
     source: 'kalshi',
     marketId: String(raw?.ticker ?? ''),
     yesProb: clampProb(yesProb),
-    volume24h: toNumber(raw?.volume_24h),
-    volumeTotal: toNumber(raw?.volume),
+    // Current API uses *_fp (float) names; fall back to legacy cent fields.
+    volume24h: toNumber(raw?.volume_24h_fp ?? raw?.volume_24h),
+    volumeTotal: toNumber(raw?.volume_fp ?? raw?.volume),
     ts: new Date().toISOString(),
   }
 }
