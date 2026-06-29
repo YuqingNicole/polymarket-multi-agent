@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Augur Terminal · 架构图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg0:#ECE7DA;--bg1:#F3EFE6;--bg2:#FBF9F3;--bg3:#EFEAE0;--bg4:#E4DECF;
+    --border:#DED7C8;--border-soft:#D6CFBE;--border2:#CDC5B3;--border3:#BCB2A0;
+    --text-hi:#211E18;--text-2:#4A4538;--text-3:#615A4C;--text-mid:#6E6757;--text-low:#857C6B;--text-low2:#968C7A;
+    --accent:#C2603C;--accent-hi:#D07A55;--up:#3F8A57;--down:#BC3B44;--amber:#937420;
+    --poly:#4660A6;--kalshi:#2E8273;--purple:#6E51A0;--risk:#AF6035;
+    --tint-clay:#F4E4DA;--tint-amber:#F1EAD3;--tint-teal:#DBEDE6;--tint-purple:#E9E2F2;--tint-blue:#DEE7F1;--tint-green:#DBEDDF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg0);color:var(--text-hi);font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5;padding:0 0 60px}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+  /* header */
+  header{border-bottom:1px solid var(--border);background:var(--bg1);padding:26px 0;margin-bottom:34px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:30px;height:30px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .logo i{width:11px;height:11px;border-radius:2px;background:var(--bg2);transform:rotate(45deg);display:block}
+  .brand h1{font-size:19px;font-weight:600;letter-spacing:-.3px}
+  .brand h1 b{color:var(--accent);font-weight:600}
+  .brand .sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-low);margin-top:3px;text-transform:uppercase}
+
+  /* section */
+  section{margin-bottom:46px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+  .sec-head h2{font-size:17px;font-weight:600;letter-spacing:-.2px}
+  .sec-head .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.6px;color:var(--accent);background:var(--tint-clay);border:1px solid var(--border);padding:2px 8px;border-radius:6px;text-transform:uppercase}
+  .sec-desc{font-size:12.5px;color:var(--text-mid);margin-bottom:20px;max-width:760px}
+
+  /* diagram */
+  .diagram{background:var(--bg1);border:1px solid var(--border);border-radius:16px;padding:22px 22px 26px}
+  .layer{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:stretch}
+  .layer .lab{display:flex;flex-direction:column;justify-content:center;gap:5px}
+  .layer .lab .n{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-low2)}
+  .layer .lab .t{font-size:13px;font-weight:600;color:var(--text-2);letter-spacing:-.2px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .card{flex:1 1 0;min-width:150px;background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:12px 13px}
+  .card .h{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--text-hi);letter-spacing:-.1px}
+  .card .d{font-size:11px;color:var(--text-mid);margin-top:5px;line-height:1.45}
+  .card .meta{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--text-low2);margin-top:7px;letter-spacing:.2px}
+  .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;display:inline-block}
+  .card.lead{border-color:var(--border2);background:var(--bg3)}
+
+  /* arrow between layers */
+  .flow{display:grid;grid-template-columns:120px 1fr;gap:16px;margin:9px 0}
+  .flow .arr{grid-column:2;display:flex;align-items:center;gap:8px;color:var(--text-low);font-family:'IBM Plex Mono',monospace;font-size:10px}
+  .flow .arr::before{content:"";flex:0 0 22px;height:1px;background:var(--border3)}
+  .flow .arr .chev{color:var(--accent);font-size:12px}
+
+  /* accents */
+  .poly{color:var(--poly)} .kalshi{color:var(--kalshi)} .accent{color:var(--accent)}
+  .up{color:var(--up)} .amber{color:var(--amber)} .purple{color:var(--purple)}
+  .bg-poly{background:var(--poly)} .bg-kalshi{background:var(--kalshi)} .bg-accent{background:var(--accent)}
+  .bg-up{background:var(--up)} .bg-amber{background:var(--amber)} .bg-purple{background:var(--purple)} .bg-mid{background:var(--text-low)} .bg-down{background:var(--down)}
+
+  /* side rail (cross-cutting) */
+  .with-rail{display:grid;grid-template-columns:1fr 232px;gap:16px;align-items:start}
+  @media(max-width:880px){.with-rail{grid-template-columns:1fr}.layer,.flow{grid-template-columns:84px 1fr}}
+  .rail{background:var(--bg2);border:1px dashed var(--border2);border-radius:12px;padding:14px}
+  .rail h4{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.8px;color:var(--text-low);text-transform:uppercase;margin-bottom:11px}
+  .rail .item{margin-bottom:12px}
+  .rail .item:last-child{margin-bottom:0}
+  .rail .item .h{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600}
+  .rail .item .d{font-size:10.5px;color:var(--text-mid);margin-top:3px}
+
+  /* legend */
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+  .legend span{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-mid)}
+
+  footer{color:var(--text-low);font-size:11px;font-family:'IBM Plex Mono',monospace;border-top:1px solid var(--border);padding-top:18px;margin-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap brand">
+    <div class="logo"><i></i></div>
+    <div>
+      <h1>Augur<b>.</b>Terminal · 架构图</h1>
+      <div class="sub">Prediction Market Agent · Business &amp; System Architecture</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ===================== 业务架构图 ===================== -->
+  <section>
+    <div class="sec-head">
+      <h2>业务架构图</h2><span class="tag">Business</span>
+    </div>
+    <p class="sec-desc">从“数据 → 洞察 → 智能决策 → 体验”自下而上的业务能力分层:聚合两大预测市场行情,提炼有价值标的与异常信号,经多智能体协作给出结构化交易判断,最终在终端呈现给交易员。</p>
+
+    <div class="diagram with-rail">
+      <div>
+        <!-- L1 体验 -->
+        <div class="layer">
+          <div class="lab"><span class="n">L1</span><span class="t">终端体验</span></div>
+          <div class="row">
+            <div class="card"><div class="h"><span class="dot bg-accent"></span>市场总览</div><div class="d">聚合标的看板 · KPI · 数据表 / 监控卡</div></div>
+            <div class="card"><div class="h"><span class="dot bg-poly"></span>标的详情</div><div class="d">概率走势 · 跨平台价差 · 市场指标</div></div>
+            <div class="card"><div class="h"><span class="dot bg-accent"></span>Agent 分析</div><div class="d">多智能体协作判断 · 决策卡</div></div>
+            <div class="card"><div class="h"><span class="dot bg-amber"></span>异常信号</div><div class="d">实时监控 · 套利/跳动/放量/新市场</div></div>
+          </div>
+        </div>
+        <div class="flow"><div class="arr"><span class="chev">▲</span>呈现判断与信号 · <span class="chev">▼</span>用户触发分析</div></div>
+
+        <!-- L2 智能决策 -->
+        <div class="layer">
+          <div class="lab"><span class="n">L2</span><span class="t">智能决策</span></div>
+          <div class="row">
+            <div class="card lead"><div class="h"><span class="dot bg-poly"></span>分析师</div><div class="d">提炼合并概率、动量、量能、价差信号</div></div>
+            <div class="card lead"><div class="h"><span class="dot bg-up"></span>多空辩论</div><div class="d">Bull / Bear 多轮结构化论证</div></div>
+            <div class="card lead"><div class="h"><span class="dot bg-accent"></span>交易员</div><div class="d">建议方向 / 仓位 / 置信度 / 核心理由</div></div>
+            <div class="card lead"><div class="h"><span class="dot bg-down"></span>风控</div><div class="d">流动性 / 结算 / 反转风险提示</div></div>
+          </div>
+        </div>
+        <div class="flow"><div class="arr">消费洞察特征 <span class="chev">▼</span></div></div>
+
+        <!-- L3 分析与洞察 -->
+        <div class="layer">
+          <div class="lab"><span class="n">L3</span><span class="t">分析与洞察</span></div>
+          <div class="row">
+            <div class="card"><div class="h">标的筛选</div><div class="d">成交/流动性/时间/活跃度打分排序</div></div>
+            <div class="card"><div class="h">概率追踪</div><div class="d">滚动窗口 1h/24h 概率与成交变化</div></div>
+            <div class="card"><div class="h">异常识别</div><div class="d">套利价差 · 概率跳动 · 成交放量</div></div>
+            <div class="card"><div class="h">跨平台合并</div><div class="d">同一事件配对 · 合并 YES 隐含概率</div></div>
+          </div>
+        </div>
+        <div class="flow"><div class="arr">归一化的实时行情 <span class="chev">▼</span></div></div>
+
+        <!-- L4 数据接入 -->
+        <div class="layer">
+          <div class="lab"><span class="n">L4</span><span class="t">行情接入</span></div>
+          <div class="row">
+            <div class="card"><div class="h"><span class="dot bg-poly"></span>Polymarket</div><div class="d">标的 · YES 概率 · 成交量(实时)</div><div class="meta">WEBSOCKET · 零鉴权</div></div>
+            <div class="card"><div class="h"><span class="dot bg-kalshi"></span>Kalshi</div><div class="d">标的 · bid/ask · 成交量</div><div class="meta">REST 轮询 · 零鉴权</div></div>
+            <div class="card"><div class="h"><span class="dot bg-mid"></span>演示数据源</div><div class="d">内置 8 个真实市场种子 · 离线可跑</div><div class="meta">SEED MODE</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- business rail: value -->
+      <div class="rail">
+        <h4>业务价值</h4>
+        <div class="item"><div class="h"><span class="dot bg-accent"></span>跨市场套利</div><div class="d">两平台同一事件价差 ≥ 4¢ 即触发套利视图</div></div>
+        <div class="item"><div class="h"><span class="dot bg-amber"></span>异动捕捉</div><div class="d">概率跳动 / 成交放量实时进入信号轨</div></div>
+        <div class="item"><div class="h"><span class="dot bg-poly"></span>结构化判断</div><div class="d">仿 TradingAgents 多智能体,输出可执行建议</div></div>
+        <div class="item"><div class="h"><span class="dot bg-up"></span>只读·非投顾</div><div class="d">仅用公开行情,不下单,输出为分析演示</div></div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><span class="dot bg-poly"></span>Polymarket</span>
+      <span><span class="dot bg-kalshi"></span>Kalshi</span>
+      <span><span class="dot bg-accent"></span>Agent / 套利</span>
+      <span><span class="dot bg-amber"></span>信号</span>
+      <span><span class="dot bg-up"></span>多 / 风控</span>
+    </div>
+  </section>
+
+  <!-- ===================== 系统架构图 ===================== -->
+  <section>
+    <div class="sec-head">
+      <h2>系统架构图</h2><span class="tag">System</span>
+    </div>
+    <p class="sec-desc">全 TypeScript / Next.js 全栈。常驻摄取服务连接交易所并归一化写入 Postgres 时序库;领域服务(分析 / 配对 / Agent)按需计算;API + SSE 驱动复刻原型的终端 UI。模型调用统一经 OpenRouter。</p>
+
+    <div class="diagram with-rail">
+      <div>
+        <!-- 外部数据源 -->
+        <div class="layer">
+          <div class="lab"><span class="n">S1</span><span class="t">外部数据源</span></div>
+          <div class="row">
+            <div class="card"><div class="h"><span class="dot bg-poly"></span>Polymarket API</div><div class="d">Gamma REST(发现) + CLOB WebSocket(行情)</div><div class="meta">gamma-api / ws-subscriptions-clob</div></div>
+            <div class="card"><div class="h"><span class="dot bg-kalshi"></span>Kalshi Trade API v2</div><div class="d">REST /markets(过滤多元、按成交量取优质二元)</div><div class="meta">external-api.kalshi.com</div></div>
+          </div>
+        </div>
+        <div class="flow"><div class="arr">原始 JSON <span class="chev">▼</span></div></div>
+
+        <!-- 接入与归一化 -->
+        <div class="layer">
+          <div class="lab"><span class="n">S2</span><span class="t">接入 · 归一化</span></div>
+          <div class="row">
+            <div class="card"><div class="h">connectors/</div><div class="d">PolyWsClient(心跳/重连) · KalshiPoller(429 退避)</div><div class="meta">polymarket.ts · kalshi.ts</div></div>
+            <div class="card"><div class="h">normalize.ts</div><div class="d">映射为统一类型 MarketMeta / MarketTick</div><div class="meta">stringified-array · 单位兼容</div></div>
+          </div>
+        </div>
+        <div class="flow"><div class="arr">归一化 tick / meta <span class="chev">▼</span></div></div>
+
+        <!-- 摄取编排 -->
+        <div class="layer">
+          <div class="lab"><span class="n">S3</span><span class="t">摄取编排</span></div>
+          <div class="row">
+            <div class="card lead"><div class="h"><span class="dot bg-accent"></span>Ingestion Worker</div><div class="d">instrumentation 随服务启动 · seed/live 双模 · 周期重算信号</div><div class="meta">ingest/worker.ts</div></div>
+            <div class="card"><div class="h">内存事件总线</div><div class="d">tick / signals 事件广播 → SSE</div><div class="meta">ingest/bus.ts (EventEmitter)</div></div>
+          </div>
+        </div>
+        <div class="flow"><div class="arr">写入 / 读取 <span class="chev">▼</span></div></div>
+
+        <!-- 持久化 -->
+        <div class="layer">
+          <div class="lab"><span class="n">S4</span><span class="t">持久化</span></div>
+          <div class="row">
+            <div class="card"><div class="h"><span class="dot bg-kalshi"></span>PostgreSQL · Prisma</div><div class="d"><span class="mono">markets · ticks(时序) · signals · market_pairs · agent_runs</span></div><div class="meta">store.ts 读写桥 · 端口 5544</div></div>
+          </div>
+        </div>
+        <div class="flow"><div class="arr">领域查询 <span class="chev">▼</span></div></div>
+
+        <!-- 领域服务 -->
+        <div class="layer">
+          <div class="lab"><span class="n">S5</span><span class="t">领域服务</span></div>
+          <div class="row">
+            <div class="card"><div class="h">分析框架</div><div class="d">screener · probTracker · anomaly(jump/spike/spread)</div><div class="meta">lib/analysis</div></div>
+            <div class="card"><div class="h">跨平台配对</div><div class="d">策展种子 + 标题相似度预筛 + LLM 语义判定</div><div class="meta">lib/matching</div></div>
+            <div class="card"><div class="h">Agent 流水线</div><div class="d">deterministic(原型决策树) / llm(分析师→交易员)</div><div class="meta">lib/agents · pipeline.ts</div></div>
+          </div>
+        </div>
+        <div class="flow"><div class="arr">HTTP 接口 <span class="chev">▼</span></div></div>
+
+        <!-- 接口层 -->
+        <div class="layer">
+          <div class="lab"><span class="n">S6</span><span class="t">接口层</span></div>
+          <div class="row">
+            <div class="card"><div class="h mono">GET /api/markets</div><div class="d">聚合市场视图(seed 返回原型数据 / live 计算)</div></div>
+            <div class="card"><div class="h mono">POST /api/agent</div><div class="d">跑流水线并持久化判断</div></div>
+            <div class="card"><div class="h mono">GET /api/signals</div><div class="d">异常信号列表</div></div>
+            <div class="card"><div class="h mono">GET /api/stream</div><div class="d">SSE 实时推送</div></div>
+          </div>
+        </div>
+        <div class="flow"><div class="arr">数据 + 实时事件 <span class="chev">▼</span></div></div>
+
+        <!-- 前端 -->
+        <div class="layer">
+          <div class="lab"><span class="n">S7</span><span class="t">前端 · 终端 UI</span></div>
+          <div class="row">
+            <div class="card"><div class="h"><span class="dot bg-accent"></span>Next.js App Router</div><div class="d">React 19 · fetch + EventSource 实时联动</div><div class="meta">components/terminal · api.ts</div></div>
+            <div class="card"><div class="h">dc-runtime 解释器</div><div class="d">复用原型原始标记渲染 → 100% 还原</div><div class="meta">Dc.tsx · useTerminal.tsx</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- system rail: cross-cutting -->
+      <div class="rail">
+        <h4>横切 / 基础设施</h4>
+        <div class="item"><div class="h"><span class="dot bg-purple"></span>模型层 · OpenRouter</div><div class="d">主 DeepSeek V4 flash / 兜底 Gemini 3.5 Flash · zod 校验 · 自动降级</div></div>
+        <div class="item"><div class="h"><span class="dot bg-accent"></span>实时通道</div><div class="d">Worker → 事件总线 → SSE → 浏览器刷新</div></div>
+        <div class="item"><div class="h"><span class="dot bg-mid"></span>配置</div><div class="d">DATA_SOURCE seed/live · AGENT_ENGINE deterministic/llm</div></div>
+        <div class="item"><div class="h"><span class="dot bg-up"></span>质量</div><div class="d">Vitest 56 例 · tsc 严格 · Playwright 像素回归</div></div>
+        <div class="item"><div class="h"><span class="dot bg-kalshi"></span>运行</div><div class="d">OrbStack Postgres · Prisma 迁移 · 种子灌库</div></div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><span class="dot bg-accent"></span>编排 / 入口</span>
+      <span><span class="dot bg-kalshi"></span>数据 / 存储</span>
+      <span><span class="dot bg-poly"></span>外部源</span>
+      <span><span class="dot bg-purple"></span>模型</span>
+      <span><span class="dot bg-up"></span>质量保障</span>
+    </div>
+  </section>
+
+  <footer>
+    <span>Augur Terminal · 预测市场数据源 + 分析框架</span>
+    <span>Polymarket × Kalshi · TradingAgents-style</span>
+  </footer>
+</div>
+
+</body>
+</html>
