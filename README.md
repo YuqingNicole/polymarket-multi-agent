@@ -61,14 +61,27 @@ Polymarket / Kalshi 行情。
 
 ## 3. 架构与数据流
 
-```
- 数据接入 Connectors        归一化         持久化(Postgres)      分析框架               前端(终端 UI)
- Polymarket  (WS,免鉴权)  ─┐                                  Screener 筛选         市场总览 / 标的详情
- Kalshi      (REST 轮询)  ─┤→ MarketTick →  ticks(时序)   →   ProbTracker 概率追踪 →  Agent 分析 / 异常信号
-                           │   MarketMeta    markets             AnomalyDetector 异常   ⌘K / 搜索 / SSE
- ingest/worker(常驻编排) ─┘                 signals / pairs     Matcher 跨平台配对
-                                            agent_runs           Agent 流水线(按需)
-```
+> 可交互浅色版(终端同款配色)见 [`docs/architecture.html`](docs/architecture.html) —— 浏览器打开。下方为静态预览。
+
+**① 业务架构图** · 能力分层(数据 → 洞察 → 智能决策 → 体验)
+
+![业务架构图](docs/prototype/shots/arch-business.png)
+
+**② 系统架构图** · 组件分层 + 横切设施
+
+![系统架构图](docs/prototype/shots/arch-system.png)
+
+**③ 数据流时序图** · 实时摄取流 + Agent 分析请求流
+
+![数据流时序图](docs/prototype/shots/arch-sequence.png)
+
+**④ 部署 / 进程拓扑图** · 进程 / 容器 / 出网拓扑
+
+![部署/进程拓扑图](docs/prototype/shots/arch-topology.png)
+
+**⑤ ER 数据模型图** · Prisma / PostgreSQL
+
+![ER 数据模型图](docs/prototype/shots/arch-er.png)
 
 - **进程模型**:Next.js `instrumentation.ts` 在服务启动时拉起常驻摄取服务(WS/轮询 → 归一化 →
   写库 → 周期性重算信号),通过内存事件总线把更新经 **SSE**(`/api/stream`)推给前端。
