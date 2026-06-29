@@ -152,7 +152,9 @@ describe('fetchPolyTick', () => {
 describe('fetchKalshiMarkets', () => {
   it('GETs the kalshi markets endpoint and normalizes', async () => {
     const fetchImpl = vi.fn(async (url: any) => {
-      expect(String(url)).toContain('/markets?status=open&limit=3')
+      const u = String(url)
+      expect(u).toContain('/markets?')
+      expect(u).toContain('status=open')
       return fakeResponse({ markets: [kalshiCents] })
     }) as unknown as typeof fetch
 

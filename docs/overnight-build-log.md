@@ -109,6 +109,24 @@ node docs/prototype/shoot.mjs both # 重新生成对比截图(需先 npx playwri
   单平台数据(市场/价格/单市场信号)在 live 下正常流动。
 - 结论:**live 摄取管道生产可用**;要让 live 模式的 UI 也丰富,下一步是接 live 跨平台配对 + 优化 Kalshi 选市。
 
+## 6d. Live 跨平台配对 + Kalshi 选市优化(已完成 ✅)
+
+**Kalshi 选市优化**:深挖发现 `external-api.kalshi.com` 这个免鉴权源**几乎全是多元 `KXMVE*` 体育市场**
+(6000 个里二元市场仅 2 个,且零成交);`api.kalshi.com`/`trading-api` 已废弃/不可达,`demo` host 有多样
+二元市场但零成交。**这是真实的数据可得性限制,非代码问题。** 据此把 `fetchKalshiMarkets` 改为:剔除多元
+`KXMVE*`、要求有 yes 价、按成交量排序、放大拉取量再筛——拿到当前源里最优的二元市场。
+
+**Live 跨平台配对**:把 `matchMarkets`(标题相似度预筛 + LLM 语义判定)接进 `startLive`,启动时跑一次、
+落 `market_pairs`(有 OpenRouter key 则用 LLM 判定)。判定次数封顶 60、候选按相似度降序,真对优先判、长尾截断,成本可控。
+
+**真实 LLM 配对实测**(贴近两平台真实措辞的 3×3 集):
+- ✅ Fed↔Fed(置信 0.99)、BTC↔BTC(0.95)正确配对——**即便措辞不同**(`Bitcoin/$150,000` vs `BTC/$150k`)。
+- ✅ FIFA World Cup ↔ NBA Championship **正确拒绝**——尽管词汇高度相似(`Will…win…2026…`),LLM 判定为不同事件。
+- 结论:预筛只控成本,**语义决策交给 LLM**,机制端到端可用。
+
+**已知短板(诚实)**:词汇预筛(Jaccard)对语义等价召回有限(BTC 那对相似度仅 0.06,靠把阈值降到 0.04 才进 LLM);
+更稳的做法是 embedding 相似度预筛——留作后续。
+
 ## 7. 仍留白 / 你可定夺(诚实记录)
 - **live 模式压测**:真实 Polymarket WS + Kalshi 轮询代码已实现并配 fixture 单测,但沙箱内未长连真实交易所
   压测;`DATA_SOURCE=live` 可切换试。

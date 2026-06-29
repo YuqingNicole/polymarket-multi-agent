@@ -78,19 +78,26 @@ export async function judgePair(poly: MarketMeta, kalshi: MarketMeta): Promise<{
 export async function matchMarkets(
   polyMarkets: MarketMeta[],
   kalshiMarkets: MarketMeta[],
-  opts: { acceptThreshold?: number; useLlm?: boolean } = {},
+  opts: { acceptThreshold?: number; useLlm?: boolean; minSimilarity?: number; maxJudgements?: number } = {},
 ): Promise<MarketPair[]> {
   const acceptThreshold = opts.acceptThreshold ?? 0.6
   const useLlm = opts.useLlm ?? true
-  const candidates = candidatePairs(polyMarkets, kalshiMarkets)
+  // Lenient prescreen so semantically-equal but differently-worded titles
+  // (e.g. "Bitcoin $150,000" vs "BTC $150k") still reach the LLM judge, which
+  // makes the real decision. Cap judgements to bound LLM cost.
+  const candidates = candidatePairs(polyMarkets, kalshiMarkets, opts.minSimilarity ?? 0.04)
+  const maxJudgements = opts.maxJudgements ?? 60
   const pairs: MarketPair[] = []
   const usedPoly = new Set<string>()
   const usedKalshi = new Set<string>()
+  let judged = 0
 
   for (const c of candidates) {
     if (usedPoly.has(c.poly.marketId) || usedKalshi.has(c.kalshi.marketId)) continue
+    if (useLlm && judged >= maxJudgements) break
     let confidence = c.similarity
     if (useLlm) {
+      judged++
       try {
         const verdict = await judgePair(c.poly, c.kalshi)
         if (!verdict.same) continue

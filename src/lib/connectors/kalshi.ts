@@ -10,14 +10,35 @@ export interface FetchKalshiMarketsOpts {
   fetchImpl?: typeof fetch
 }
 
+// The public feed is dominated by multivariate (KXMVE*) collection markets that
+// have no single YES price — useless for our binary yes/no model. Keep only
+// tradeable binary markets and rank by volume.
+function isTradeableBinary(m: any): boolean {
+  const ticker = String(m?.ticker ?? '')
+  if (ticker === '' || /^KXMVE/.test(ticker)) return false
+  return (
+    m?.yes_bid_dollars != null ||
+    m?.yes_ask_dollars != null ||
+    m?.last_price_dollars != null ||
+    m?.yes_bid != null ||
+    m?.last_price != null
+  )
+}
+
+function volScore(m: any): number {
+  return Number(m?.volume_fp ?? m?.volume ?? 0) || 0
+}
+
 // Returns both normalized meta and the raw rows, since the poller needs the
 // raw rows to derive ticks (prices live on the same market objects).
 async function fetchKalshiRaw(
   opts: FetchKalshiMarketsOpts = {},
 ): Promise<{ raw: any[]; status: number; ok: boolean }> {
-  const limit = opts.limit ?? 100
+  const want = opts.limit ?? 100
   const f = opts.fetchImpl ?? fetch
-  const url = `${config.KALSHI_API_URL}/markets?status=open&limit=${limit}`
+  // Over-fetch, then filter to liquid binary markets and keep the top `want`.
+  const fetchLimit = Math.min(1000, Math.max(want * 8, 200))
+  const url = `${config.KALSHI_API_URL}/markets?status=open&limit=${fetchLimit}`
 
   const res = await f(url)
   if (!res.ok) {
@@ -29,7 +50,11 @@ async function fetchKalshiRaw(
     : Array.isArray(data)
       ? data
       : []
-  return { raw: list, status: res.status, ok: true }
+  const filtered = list
+    .filter(isTradeableBinary)
+    .sort((a, b) => volScore(b) - volScore(a))
+    .slice(0, want)
+  return { raw: filtered, status: res.status, ok: true }
 }
 
 export async function fetchKalshiMarkets(
