@@ -77,6 +77,43 @@
   .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
   .legend span{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-mid)}
 
+  /* sequence diagram */
+  .seq + .seq{margin-top:30px;padding-top:24px;border-top:1px solid var(--border)}
+  .seq-title{font-size:13.5px;font-weight:600;color:var(--text-2);margin-bottom:14px;display:flex;align-items:center;gap:9px}
+  .seq-title .k{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);background:var(--tint-clay);border:1px solid var(--border);border-radius:5px;padding:1px 7px}
+  .lanes{display:grid;grid-template-columns:repeat(5,1fr);margin-bottom:4px}
+  .lanes .p{justify-self:center;text-align:center;font-size:11.5px;font-weight:600;color:var(--text-2);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 9px;min-width:84px}
+  .lanes .p .s{display:block;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:8.5px;color:var(--text-low2);margin-top:2px;letter-spacing:.2px}
+  .seq-body{position:relative;padding-top:6px}
+  .ll{position:absolute;top:0;bottom:0;width:0;border-left:1.5px dashed var(--border2)}
+  .msg{position:relative;height:46px}
+  .bar{position:absolute;top:27px;height:0}
+  .bar::before{content:"";position:absolute;left:0;right:0;top:0;border-top:1.6px solid var(--text-low)}
+  .bar .lbl{position:absolute;left:50%;transform:translateX(-50%);top:-16px;white-space:nowrap;font-size:10.5px;color:var(--text-3);background:var(--bg1);padding:0 7px}
+  .bar.r::after{content:"";position:absolute;right:-1px;top:-3.5px;border-left:6px solid var(--text-low);border-top:4px solid transparent;border-bottom:4px solid transparent}
+  .bar.l::after{content:"";position:absolute;left:-1px;top:-3.5px;border-right:6px solid var(--text-low);border-top:4px solid transparent;border-bottom:4px solid transparent}
+  .bar.acc::before{border-top-color:var(--accent)} .bar.acc.r::after{border-left-color:var(--accent)} .bar.acc.l::after{border-right-color:var(--accent)}
+  .bar.acc .lbl{color:var(--accent)}
+  .self{position:absolute;top:13px;transform:translateX(-50%);font-size:10px;color:var(--accent);background:var(--tint-clay);border:1px solid var(--border);border-radius:6px;padding:3px 9px;white-space:nowrap}
+  .seq-note{font-size:10.5px;color:var(--text-low);margin-top:10px;font-style:italic}
+
+  /* topology */
+  .topo{display:grid;grid-template-columns:188px 1fr 236px;gap:16px;align-items:start}
+  @media(max-width:880px){.topo{grid-template-columns:1fr}}
+  .zone{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:13px}
+  .zone.proc{background:var(--bg1);border-color:var(--border2);border-style:solid}
+  .zh{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.7px;color:var(--text-low);text-transform:uppercase;margin-bottom:11px;display:flex;align-items:center;gap:6px}
+  .node{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:9px 11px;margin-bottom:8px}
+  .zone.proc .node{background:var(--bg3)}
+  .node:last-child{margin-bottom:0}
+  .node .nh{font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;letter-spacing:-.1px}
+  .node .nd{font-size:10.5px;color:var(--text-mid);margin-top:3px;line-height:1.4}
+  .node .np{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-low2);margin-top:6px;letter-spacing:.2px}
+  .substack{display:flex;flex-direction:column;gap:13px}
+  .conns{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+  .conns span{font-size:10.5px;color:var(--text-mid);font-family:'IBM Plex Mono',monospace}
+  .conns b{color:var(--accent);font-weight:600}
+
   footer{color:var(--text-low);font-size:11px;font-family:'IBM Plex Mono',monospace;border-top:1px solid var(--border);padding-top:18px;margin-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 </style>
 </head>
@@ -267,6 +304,150 @@
       <span><span class="dot bg-poly"></span>外部源</span>
       <span><span class="dot bg-purple"></span>模型</span>
       <span><span class="dot bg-up"></span>质量保障</span>
+    </div>
+  </section>
+
+  <!-- ===================== 数据流时序图 ===================== -->
+  <section>
+    <div class="sec-head"><h2>数据流时序图</h2><span class="tag">Sequence</span></div>
+    <p class="sec-desc">两条核心数据流的时序:① 实时行情从交易所经归一化写入时序库,并通过 SSE 推送刷新前端;② 用户触发 Agent 分析时,经流水线两段 LLM 调用产出结构化判断并回写持久化。</p>
+
+    <div class="diagram">
+      <!-- 流程 ① 摄取 -->
+      <div class="seq">
+        <div class="seq-title"><span class="k">流程 ①</span>实时行情摄取 → 持久化 → SSE 推送</div>
+        <div class="lanes">
+          <div class="p">交易所<span class="s">Poly WS / Kalshi REST</span></div>
+          <div class="p">Connector<span class="s">connectors/</span></div>
+          <div class="p">Worker<span class="s">ingest/worker</span></div>
+          <div class="p">Postgres<span class="s">store · Prisma</span></div>
+          <div class="p">浏览器<span class="s">terminal UI</span></div>
+        </div>
+        <div class="seq-body">
+          <div class="ll" style="left:10%"></div><div class="ll" style="left:30%"></div><div class="ll" style="left:50%"></div><div class="ll" style="left:70%"></div><div class="ll" style="left:90%"></div>
+          <div class="msg"><div class="bar l" style="left:10%;width:20%"><span class="lbl">订阅 WS / 轮询 REST</span></div></div>
+          <div class="msg"><div class="bar r" style="left:10%;width:20%"><span class="lbl">实时行情</span></div></div>
+          <div class="msg"><div class="self" style="left:30%">归一化 → MarketTick</div></div>
+          <div class="msg"><div class="bar r" style="left:30%;width:20%"><span class="lbl">onTick(MarketTick)</span></div></div>
+          <div class="msg"><div class="bar r" style="left:50%;width:20%"><span class="lbl">insertTicks(时序写入)</span></div></div>
+          <div class="msg"><div class="bar r" style="left:50%;width:20%"><span class="lbl">读历史 → 重算并写信号</span></div></div>
+          <div class="msg"><div class="bar acc r" style="left:50%;width:40%"><span class="lbl">bus.emit → SSE 推送</span></div></div>
+          <div class="msg"><div class="self" style="left:90%">刷新看板 / 信号轨</div></div>
+        </div>
+      </div>
+
+      <!-- 流程 ② Agent -->
+      <div class="seq">
+        <div class="seq-title"><span class="k">流程 ②</span>Agent 分析请求(AGENT_ENGINE = llm)</div>
+        <div class="lanes">
+          <div class="p">浏览器<span class="s">terminal UI</span></div>
+          <div class="p">API<span class="s">route handlers</span></div>
+          <div class="p">Postgres<span class="s">store · Prisma</span></div>
+          <div class="p">Pipeline<span class="s">lib/agents</span></div>
+          <div class="p">OpenRouter<span class="s">DeepSeek V4</span></div>
+        </div>
+        <div class="seq-body">
+          <div class="ll" style="left:10%"></div><div class="ll" style="left:30%"></div><div class="ll" style="left:50%"></div><div class="ll" style="left:70%"></div><div class="ll" style="left:90%"></div>
+          <div class="msg"><div class="bar acc r" style="left:10%;width:20%"><span class="lbl">POST /api/agent/poly/{id}</span></div></div>
+          <div class="msg"><div class="bar r" style="left:30%;width:20%"><span class="lbl">buildAgentInput · 读历史/配对</span></div></div>
+          <div class="msg"><div class="bar l" style="left:30%;width:20%"><span class="lbl">ticks / pair</span></div></div>
+          <div class="msg"><div class="bar r" style="left:30%;width:40%"><span class="lbl">runPipeline(input)</span></div></div>
+          <div class="msg"><div class="bar r" style="left:70%;width:20%"><span class="lbl">① 分析师 prompt</span></div></div>
+          <div class="msg"><div class="bar l" style="left:70%;width:20%"><span class="lbl">综述 + 多空论据</span></div></div>
+          <div class="msg"><div class="bar r" style="left:70%;width:20%"><span class="lbl">② 交易员 / 风控 prompt</span></div></div>
+          <div class="msg"><div class="bar l" style="left:70%;width:20%"><span class="lbl">结构化判断</span></div></div>
+          <div class="msg"><div class="bar l" style="left:30%;width:40%"><span class="lbl">AgentVerdict</span></div></div>
+          <div class="msg"><div class="bar r" style="left:30%;width:20%"><span class="lbl">saveAgentRun</span></div></div>
+          <div class="msg"><div class="bar acc l" style="left:10%;width:20%"><span class="lbl">JSON verdict</span></div></div>
+          <div class="msg"><div class="self" style="left:10%">决策卡 + 多空辩论动画</div></div>
+        </div>
+        <p class="seq-note">注:任一 LLM 调用失败自动回退确定性引擎;AGENT_ENGINE = deterministic 时跳过 ①②(OpenRouter)直接本地决策树出结果。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 部署 / 进程拓扑图 ===================== -->
+  <section>
+    <div class="sec-head"><h2>部署 / 进程拓扑图</h2><span class="tag">Topology</span></div>
+    <p class="sec-desc">单 Node.js 进程承载 Next.js(API + SSE)与常驻摄取 Worker(随 instrumentation 启动);经 Prisma 连本地 OrbStack 的 Postgres 容器,并出网连接两家交易所与 OpenRouter。开发期一条 <span class="mono">npm run dev</span> 全起。</p>
+
+    <div class="diagram">
+      <div class="topo">
+        <!-- 客户端 -->
+        <div class="zone">
+          <div class="zh"><span class="dot bg-accent"></span>客户端</div>
+          <div class="node">
+            <div class="nh"><span class="dot bg-accent"></span>浏览器 · 终端 UI</div>
+            <div class="nd">React 19 · dc 解释器渲染 · fetch + EventSource</div>
+            <div class="np">http://localhost:3939</div>
+          </div>
+        </div>
+
+        <!-- 服务进程 -->
+        <div class="zone proc">
+          <div class="zh"><span class="dot bg-poly"></span>Node.js 进程 · next</div>
+          <div class="node">
+            <div class="nh"><span class="dot bg-accent"></span>Instrumentation → Ingestion Worker</div>
+            <div class="nd">单例常驻 · seed/live · 周期重算信号 · 内存事件总线(EventEmitter)</div>
+            <div class="np">instrumentation.ts · ingest/worker.ts</div>
+          </div>
+          <div class="pgrid">
+            <div class="node">
+              <div class="nh">API Route Handlers</div>
+              <div class="nd">/api/markets · /api/signals · /api/agent</div>
+            </div>
+            <div class="node">
+              <div class="nh">SSE 端点</div>
+              <div class="nd">/api/stream · 订阅事件总线</div>
+            </div>
+            <div class="node">
+              <div class="nh">领域服务</div>
+              <div class="nd">analysis · matching · agents</div>
+            </div>
+            <div class="node">
+              <div class="nh">Prisma Client</div>
+              <div class="nd">store.ts 读写桥</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 数据 + 外部 -->
+        <div class="substack">
+          <div class="zone">
+            <div class="zh"><span class="dot bg-kalshi"></span>数据 · OrbStack</div>
+            <div class="node">
+              <div class="nh"><span class="dot bg-kalshi"></span>augur-postgres 容器</div>
+              <div class="nd">postgres:16-alpine · 卷 augur-pgdata · 5 张表</div>
+              <div class="np">TCP 127.0.0.1:5544</div>
+            </div>
+          </div>
+          <div class="zone">
+            <div class="zh"><span class="dot bg-mid"></span>外部服务(出网)</div>
+            <div class="node">
+              <div class="nh"><span class="dot bg-poly"></span>Polymarket</div>
+              <div class="nd">Gamma REST · CLOB WebSocket</div>
+              <div class="np">HTTPS · WSS · 零鉴权</div>
+            </div>
+            <div class="node">
+              <div class="nh"><span class="dot bg-kalshi"></span>Kalshi</div>
+              <div class="nd">Trade API v2 REST</div>
+              <div class="np">HTTPS · 零鉴权</div>
+            </div>
+            <div class="node">
+              <div class="nh"><span class="dot bg-purple"></span>OpenRouter</div>
+              <div class="nd">DeepSeek V4 / Gemini 3.5 Flash</div>
+              <div class="np">HTTPS · Bearer key</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="conns">
+        <span>浏览器 ⇄ 服务 &nbsp;<b>HTTP / SSE :3939</b></span>
+        <span>服务 ⇄ Postgres &nbsp;<b>TCP :5544 (Prisma)</b></span>
+        <span>Worker → 交易所 &nbsp;<b>WSS / HTTPS</b></span>
+        <span>Agent / 配对 → OpenRouter &nbsp;<b>HTTPS</b></span>
+      </div>
     </div>
   </section>
 
