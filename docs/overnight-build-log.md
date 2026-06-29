@@ -83,6 +83,15 @@ node docs/prototype/shoot.mjs both # 重新生成对比截图(需先 npx playwri
 - 验证:Playwright 实测点击触发 `GET /api/markets`、`GET /api/stream`、`POST /api/agent/poly/poly-fed-jul`,
   控制台零错误;`tsc` 干净;56 单测全绿。
 
+## 6b. LLM 引擎 UI 联调(已验证 ✅)
+
+`AGENT_ENGINE=llm` 下经浏览器点"运行 Agent 分析"实测(标的:比特币 $150K):
+- `POST /api/agent` 走真实 OpenRouter(google/gemini-3.5-flash),**延迟 ~15s**,`engine: llm`。
+- 判断:买入 YES / 置信 0.75 / 中等仓位 —— 与确定性引擎的措辞和数值不同,确为大模型自主生成。
+- 决策卡 / 四角色卡 / 多空辩论全部渲染真实 LLM 中文内容,布局逐像素保真,控制台零错误。
+- 证据截图:`docs/prototype/shots/port-agent-llm.png`(抓到分阶段动画进行中)。
+- 验证后已把 `.env` 的 `AGENT_ENGINE` 调回默认 `deterministic`(零成本/可复现);随时改回 `llm` 即用真实大模型。
+
 ## 7. 仍留白 / 你可定夺(诚实记录)
 - **live 模式压测**:真实 Polymarket WS + Kalshi 轮询代码已实现并配 fixture 单测,但沙箱内未长连真实交易所
   压测;`DATA_SOURCE=live` 可切换试。
