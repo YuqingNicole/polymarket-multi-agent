@@ -14,8 +14,8 @@ const schema = z.object({
   AGENT_ENGINE: z.enum(['deterministic', 'llm']).default('deterministic'),
   OPENROUTER_API_KEY: z.string().default(''),
   OPENROUTER_BASE_URL: z.string().default('https://openrouter.ai/api/v1'),
-  LLM_MODEL_PRIMARY: z.string().default('google/gemini-3.5-flash'),
-  LLM_MODEL_FALLBACK: z.string().default('deepseek/deepseek-v4-flash'),
+  LLM_MODEL_PRIMARY: z.string().default('deepseek/deepseek-v4-flash'),
+  LLM_MODEL_FALLBACK: z.string().default('google/gemini-3.5-flash'),
 })
 
 export const config = schema.parse(process.env)

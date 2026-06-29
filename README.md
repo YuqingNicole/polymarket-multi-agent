@@ -54,8 +54,8 @@ Polymarket / Kalshi 行情。
 | `DATA_SOURCE` | `seed` | `seed`(离线演示)/ `live`(真实行情) |
 | `AGENT_ENGINE` | `deterministic` | `deterministic`(零成本可复现)/ `llm`(真实多 Agent) |
 | `OPENROUTER_API_KEY` | — | OpenRouter 密钥(`llm` 引擎与配对器需要) |
-| `LLM_MODEL_PRIMARY` | `google/gemini-3.5-flash` | 主模型 |
-| `LLM_MODEL_FALLBACK` | `deepseek/deepseek-v4-flash` | 主模型失败时自动兜底 |
+| `LLM_MODEL_PRIMARY` | `deepseek/deepseek-v4-flash` | 主模型 |
+| `LLM_MODEL_FALLBACK` | `google/gemini-3.5-flash` | 主模型失败时自动兜底 |
 
 ---
 
@@ -199,7 +199,7 @@ interface AgentVerdict {               // Agent 结构化判断(含展示字段)
 }
 ```
 
-`AGENT_ENGINE=llm` 时同一标的由 Gemini 3.5 flash 经 OpenRouter 生成更丰富的中文论证(结构相同)。
+`AGENT_ENGINE=llm` 时同一标的由 DeepSeek V4 flash 经 OpenRouter 生成更丰富的中文论证(结构相同)。
 
 ---
 
