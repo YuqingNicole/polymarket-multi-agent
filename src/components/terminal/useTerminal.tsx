@@ -3,9 +3,12 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   buildPrototypeMarkets,
   fmtVol,
+  genHist,
+  hash,
   pct,
   type PrototypeMarket,
 } from '@/lib/seed/prototype'
+import { DetailChart } from './DetailChart'
 import { deterministicVerdict, prototypeAnalysis, type RawAnalysis } from '@/lib/agents/deterministic'
 import type { AgentInput } from '@/lib/agents/input'
 import type { AgentVerdict } from '@/lib/types'
@@ -75,38 +78,6 @@ function sparkline(hist: number[], color: string, w: number, h: number) {
   return (
     <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ display: 'block', overflow: 'visible' }}>
       <polyline points={pts} strokeWidth={1.4} strokeLinejoin="round" strokeLinecap="round" style={{ fill: 'none', stroke: color }} />
-    </svg>
-  )
-}
-
-function areaChart(hist: number[], w: number, h: number) {
-  const slice = hist
-  const min = Math.min(...slice) - 0.03
-  const max = Math.max(...slice) + 0.03
-  const rng = max - min || 1
-  const X = (i: number) => (i / (slice.length - 1)) * w
-  const Y = (v: number) => h - ((v - min) / rng) * h
-  const line = slice.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')
-  const area = `M0,${h} L` + slice.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' L') + ` L${w},${h} Z`
-  const k = slice.map((v) => v - 0.025)
-  const lineK = k.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')
-  const grid = [0.25, 0.5, 0.75].map((g) => (
-    <line key={g} x1={0} x2={w} y1={g * h} y2={g * h} strokeWidth={1} strokeDasharray="3 4" style={{ stroke: 'var(--bg4)' }} />
-  ))
-  const last = slice[slice.length - 1]
-  return (
-    <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" style={{ display: 'block', overflow: 'visible' }}>
-      <defs>
-        <linearGradient id="ag" x1={0} y1={0} x2={0} y2={1}>
-          <stop offset="0%" stopOpacity={0.22} style={{ stopColor: 'var(--poly)' }} />
-          <stop offset="100%" stopOpacity={0} style={{ stopColor: 'var(--poly)' }} />
-        </linearGradient>
-      </defs>
-      {grid}
-      <path d={area} fill="url(#ag)" />
-      <polyline points={lineK} strokeWidth={1.4} strokeLinejoin="round" style={{ fill: 'none', stroke: 'var(--kalshi)', strokeOpacity: 0.7 }} />
-      <polyline points={line} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" style={{ fill: 'none', stroke: 'var(--poly)' }} />
-      <circle cx={X(slice.length - 1)} cy={Y(last)} r={3.5} style={{ fill: 'var(--poly)' }} />
     </svg>
   )
 }
@@ -322,8 +293,12 @@ export function useTerminal(): Scope {
   ]
 
   const rmap: Record<string, number> = { '1H': 8, '6H': 20, '1D': 40, '1W': 64, ALL: 80 }
-  const dh = sel.hist.slice(-(rmap[st.range] || 80))
-  const detailChart = areaChart(dh, 640, 240)
+  const k = rmap[st.range] || 80
+  // Real per-venue probability series (same generator the seed store uses), so
+  // the two lines reflect each venue's actual path rather than a fake offset.
+  const polyHist = genHist(hash('poly-' + selBase.id), selBase.poly, 0.018, 80).slice(-k)
+  const kalshiHist = genHist(hash('kalshi-' + selBase.id), selBase.kalshi, 0.018, 80).slice(-k)
+  const detailChart = <DetailChart poly={polyHist} kalshi={kalshiHist} range={st.range} />
 
   const an: RawAnalysis =
     verdict && verdict.id === st.selectedId
