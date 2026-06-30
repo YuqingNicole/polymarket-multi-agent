@@ -1,17 +1,71 @@
 /* Layout fixes layered on top of the verbatim prototype CSS (globals.css).
    Kept separate so re-running docs/prototype/build-ui-assets.mjs never clobbers them. */
 
-/* The prototype root is a height:100vh grid; its single auto row grows with
-   content, so the inner overflow:auto pane never gets a bounded height and
-   tall screens (异常信号 / Agent 分析) get clipped under body{overflow:hidden}.
-   Cap the row to the viewport and let the grid item shrink so the inner pane
-   scrolls. Visuals are unchanged for short screens. */
+/* Shell = full viewport, vertical: [grid pane | footer]. */
 .augur-shell {
   height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
+
+/* The prototype root grid: let it fill the space above the footer and cap its
+   single row to the available height so the inner overflow:auto pane scrolls
+   (tall 异常信号 / Agent 分析 screens were clipped under body{overflow:hidden}). */
 .augur-shell > div {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
   grid-template-rows: minmax(0, 1fr);
 }
 .augur-shell main {
   min-height: 0;
+}
+
+/* Footer / status bar — terminal style, theme-aware via the design tokens. */
+.augur-footer {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  height: 30px;
+  padding: 0 18px;
+  background: var(--bg1);
+  border-top: 1px solid var(--border);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  color: var(--text-low);
+  letter-spacing: .2px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.augur-footer .grp {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.augur-footer .it {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.augur-footer .it .d {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.augur-footer .sep {
+  color: var(--text-faint);
+}
+.augur-footer .muted {
+  color: var(--text-low2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.augur-footer b {
+  color: var(--text-3);
+  font-weight: 600;
 }
