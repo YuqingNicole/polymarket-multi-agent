@@ -13,7 +13,10 @@
     "prisma:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "tsx src/seed/run.ts",
-    "ingest": "tsx src/ingest/run.ts"
+    "ingest": "tsx src/ingest/run.ts",
+    "scan": "tsx src/scanner.ts",
+    "scan:loop": "tsx src/scanner.ts --loop",
+    "scan:no-llm": "tsx src/scanner.ts --no-llm"
   },
   "dependencies": {
     "@prisma/client": "^6.3.1",
