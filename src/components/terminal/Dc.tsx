@@ -1,5 +1,5 @@
 'use client'
-import React, { useMemo, useState } from 'react'
+import React, { useLayoutEffect, useMemo, useRef } from 'react'
 
 // Minimal dc-runtime-compatible renderer. It interprets the prototype's
 // original body markup (sc-for / sc-if / {{ path }} / onclick / style-hover)
@@ -69,29 +69,46 @@ function parseStyle(css: string): React.CSSProperties {
   return out as React.CSSProperties
 }
 
-// An element carrying a style-hover declaration: merges the hover style on
-// mouse enter, mirroring dc-runtime's behaviour.
+// An element carrying a style-hover declaration. Styles are applied via cssText
+// on a ref rather than React's style object: React diffs styles per-property, so
+// mixing the base `border:` shorthand with the hover `border-color:` longhand
+// mangled the border (sub-properties cleared) and never reverted on mouseleave.
+// Setting the whole cssText string lets the browser resolve "shorthand; longhand
+// override" correctly, and fully restores the base on leave.
 function HoverEl({
   tag,
-  base,
-  hover,
+  baseCss,
+  hoverCss,
   props,
   children,
 }: {
   tag: string
-  base: React.CSSProperties
-  hover: React.CSSProperties
+  baseCss: string
+  hoverCss: string
   props: Record<string, unknown>
   children: React.ReactNode
 }) {
-  const [on, setOn] = useState(false)
+  const ref = useRef<HTMLElement>(null)
+  const on = useRef(false)
+  const apply = () => {
+    const el = ref.current
+    if (el) el.style.cssText = on.current ? `${baseCss};${hoverCss}` : baseCss
+  }
+  // Re-apply after every render so base-style changes (e.g. active toggle) win.
+  useLayoutEffect(apply)
   return React.createElement(
     tag,
     {
       ...props,
-      style: on ? { ...base, ...hover } : base,
-      onMouseEnter: () => setOn(true),
-      onMouseLeave: () => setOn(false),
+      ref,
+      onMouseEnter: () => {
+        on.current = true
+        apply()
+      },
+      onMouseLeave: () => {
+        on.current = false
+        apply()
+      },
     },
     children,
   )
@@ -142,8 +159,8 @@ function renderNode(node: ChildNode, scope: Scope): React.ReactNode {
 
   // ordinary element
   const props: Record<string, unknown> = { key: `k${keySeq++}` }
-  let baseStyle: React.CSSProperties | undefined
-  let hoverStyle: React.CSSProperties | undefined
+  let baseStyleStr = ''
+  let hoverStr = ''
 
   for (const attr of Array.from(el.attributes)) {
     const name = attr.name
@@ -151,9 +168,9 @@ function renderNode(node: ChildNode, scope: Scope): React.ReactNode {
     const raw = attr.value
     if (name === 'style') {
       const v = interpolate(raw, scope)
-      baseStyle = parseStyle(typeof v === 'string' ? v : raw)
+      baseStyleStr = typeof v === 'string' ? v : raw
     } else if (name === 'style-hover') {
-      hoverStyle = parseStyle(raw)
+      hoverStr = raw
     } else if (name === 'onclick') {
       const fn = interpolate(raw, scope)
       if (typeof fn === 'function') props.onClick = fn
@@ -166,20 +183,16 @@ function renderNode(node: ChildNode, scope: Scope): React.ReactNode {
 
   const children = renderChildren(el, scope)
 
-  if (hoverStyle) {
+  // Elements with a hover style apply via cssText (see HoverEl); others use a
+  // parsed React style object.
+  if (hoverStr) {
     return (
-      <HoverEl
-        key={props.key as string}
-        tag={tag}
-        base={baseStyle ?? {}}
-        hover={hoverStyle}
-        props={props}
-      >
+      <HoverEl key={props.key as string} tag={tag} baseCss={baseStyleStr} hoverCss={hoverStr} props={props}>
         {children}
       </HoverEl>
     )
   }
-  if (baseStyle) props.style = baseStyle
+  if (baseStyleStr) props.style = parseStyle(baseStyleStr)
   return React.createElement(tag, props, children.length ? children : undefined)
 }
 
