@@ -151,6 +151,23 @@ export function useTerminal(): Scope {
   }, [st.theme])
   useEffect(() => () => timersRef.current.forEach(clearTimeout), [])
 
+  // ⌘K / Ctrl+K focuses the search box; Esc blurs it.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        const el = document.querySelector<HTMLInputElement>('input.augur-search')
+        el?.focus()
+        el?.select()
+      } else if (e.key === 'Escape') {
+        const el = document.querySelector<HTMLInputElement>('input.augur-search')
+        if (el && document.activeElement === el) el.blur()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
   // Pull live data from the backend and refresh on SSE tick/signal events.
   useEffect(() => {
     let alive = true
