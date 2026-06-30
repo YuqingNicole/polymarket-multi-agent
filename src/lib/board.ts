@@ -1,6 +1,7 @@
-import type { Signal, Source } from '@/lib/types'
+import type { MarketMeta, MarketTick, Signal, Source } from '@/lib/types'
 import { config } from '@/lib/config'
-import { getHistory, getMarket, getPairs, getSignals, saveAgentRun } from '@/lib/store'
+import { getHistory, getLatestTicks, getMarket, getMarkets, getPairs, getSignals, saveAgentRun } from '@/lib/store'
+import { probDelta, volumeChangePct } from '@/lib/analysis/probTracker'
 import { buildAgentInput } from '@/lib/agents/buildInput'
 import { runPipeline } from '@/lib/agents/pipeline'
 import { buildPrototypeMarkets, type PrototypeMarket } from '@/lib/seed/prototype'
@@ -111,46 +112,62 @@ export async function getMarketViews(): Promise<MarketView[]> {
     return buildPrototypeMarkets().map((m) => ({ ...m, polyMarketId: `poly-${m.id}`, source: 'poly' as Source }))
   }
 
-  const pairs = await getPairs()
-  const signals = await getSignals(200)
-  const flagsByEvent = new Map<string, Set<string>>()
+  // live: rank the most-liquid Polymarket markets and build a row for each.
+  // Merge a Kalshi counterpart when a cross-platform pair exists; otherwise show
+  // the single venue (spread 0). Real probabilities/volumes; history grows as
+  // ticks arrive.
+  const [polyMarkets, latestTicks, pairs, signals] = await Promise.all([
+    getMarkets('poly'),
+    getLatestTicks(),
+    getPairs(),
+    getSignals(300),
+  ])
+  const latest = new Map(latestTicks.map((t) => [`${t.source}:${t.marketId}`, t]))
+  const polyToKalshi = new Map(pairs.map((p) => [p.polyMarketId, p.kalshiMarketId]))
+
+  const flagsByMarket = new Map<string, Set<string>>()
   for (const s of signals) {
     const flag = KIND_TO_FLAG[s.kind]
     if (!flag) continue
-    const key = s.marketId.replace(/^(poly|kalshi)-/, '')
-    const set = flagsByEvent.get(key) ?? new Set<string>()
+    const set = flagsByMarket.get(s.marketId) ?? new Set<string>()
     set.add(flag)
-    flagsByEvent.set(key, set)
+    flagsByMarket.set(s.marketId, set)
   }
 
+  const ranked = polyMarkets
+    .map((m) => ({ m, tick: latest.get(`poly:${m.marketId}`) }))
+    .filter((x): x is { m: MarketMeta; tick: MarketTick } => !!x.tick)
+    .sort((a, b) => (b.tick.volume24h || b.tick.volumeTotal) - (a.tick.volume24h || a.tick.volumeTotal))
+    .slice(0, 18)
+
   const views: MarketView[] = []
-  for (const p of pairs) {
-    const input = await buildAgentInput('poly', p.polyMarketId)
-    if (!input) continue
-    const meta = await getMarket('poly', p.polyMarketId)
-    const polyHist = await getHistory('poly', p.polyMarketId)
-    const kalshiHist = await getHistory('kalshi', p.kalshiMarketId)
-    const n = Math.min(polyHist.length, kalshiHist.length)
-    const hist = Array.from({ length: n }, (_, i) => (polyHist[i].yesProb + kalshiHist[i].yesProb) / 2)
-    const key = p.polyMarketId.replace(/^poly-/, '')
-    const flags = FLAG_ORDER.filter((f) => flagsByEvent.get(key)?.has(f))
+  for (const { m, tick } of ranked) {
+    const history = await getHistory('poly', m.marketId)
+    const poly = tick.yesProb
+    const kalshiId = polyToKalshi.get(m.marketId)
+    const kTick = kalshiId ? latest.get(`kalshi:${kalshiId}`) : undefined
+    const kalshi = kTick ? kTick.yesProb : poly
+    const vol24 = tick.volume24h + (kTick?.volume24h ?? 0)
+    const flags = FLAG_ORDER.filter(
+      (f) => flagsByMarket.get(m.marketId)?.has(f) || (!!kalshiId && !!flagsByMarket.get(kalshiId)?.has(f)),
+    )
     views.push({
-      id: key,
-      polyMarketId: p.polyMarketId,
+      id: m.marketId,
+      polyMarketId: m.marketId,
       source: 'poly',
-      q: input.q,
-      cat: meta?.category ?? '',
-      poly: input.poly,
-      kalshi: input.kalshi,
-      yesAvg: input.yesAvg,
-      spread: input.spread,
-      chg: input.chg,
-      vol24: input.vol24,
-      vol: input.vol,
-      liq: input.liq,
-      volChg: input.volChg,
+      q: m.title,
+      cat: m.category ?? '',
+      poly,
+      kalshi,
+      yesAvg: (poly + kalshi) / 2,
+      spread: Math.round(Math.abs(poly - kalshi) * 100),
+      chg: probDelta(history, '24h'),
+      vol24,
+      vol: tick.volumeTotal + (kTick?.volumeTotal ?? 0),
+      liq: Math.round(vol24 * 0.5),
+      volChg: Math.round(volumeChangePct(history)),
       flags,
-      hist,
+      hist: history.map((t) => t.yesProb),
     })
   }
   return views

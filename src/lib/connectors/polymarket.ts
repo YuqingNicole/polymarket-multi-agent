@@ -4,7 +4,7 @@
 import WebSocket from 'ws'
 import { config } from '@/lib/config'
 import type { MarketMeta, MarketTick } from '@/lib/types'
-import { normalizePolyMarket } from './normalize'
+import { normalizePolyMarket, normalizePolyTick } from './normalize'
 
 export interface FetchPolyMarketsOpts {
   limit?: number
@@ -26,6 +26,20 @@ export async function fetchPolyMarkets(
   const data = await res.json()
   const list: any[] = Array.isArray(data) ? data : (data?.data ?? [])
   return list.map(normalizePolyMarket)
+}
+
+// Poll the Gamma markets endpoint and derive a tick (price + volume) per market.
+// The WS market channel carries price changes but no volume, so the REST poll is
+// what feeds the board's volume / ranking.
+export async function fetchPolyTicks(opts: FetchPolyMarketsOpts = {}): Promise<MarketTick[]> {
+  const limit = opts.limit ?? 100
+  const f = opts.fetchImpl ?? fetch
+  const url = `${config.POLYMARKET_GAMMA_URL}/markets?closed=false&active=true&order=volume24hr&ascending=false&limit=${limit}`
+  const res = await f(url)
+  if (!res.ok) return []
+  const data = await res.json()
+  const list: any[] = Array.isArray(data) ? data : (data?.data ?? [])
+  return list.map(normalizePolyTick)
 }
 
 // fetchPolyTick derives yesProb from outcomePrices[0] on the market object.

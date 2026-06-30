@@ -2,7 +2,7 @@ import { config } from '@/lib/config'
 import type { MarketTick } from '@/lib/types'
 import { buildSeedBundle } from '@/lib/seed/toDomain'
 import { countMarkets, insertTicks, upsertMarkets, upsertPairs } from '@/lib/store'
-import { fetchPolyMarkets, PolyWsClient } from '@/lib/connectors/polymarket'
+import { fetchPolyMarkets, fetchPolyTicks } from '@/lib/connectors/polymarket'
 import { fetchKalshiMarkets, KalshiPoller } from '@/lib/connectors/kalshi'
 import { matchMarkets } from '@/lib/matching/matcher'
 import type { MarketMeta } from '@/lib/types'
@@ -43,19 +43,24 @@ async function startLive(): Promise<void> {
   await upsertMarkets([...poly, ...kalshi])
   await runMatching(poly, kalshi).catch(() => {})
 
-  // Polymarket WS: map YES token -> marketId so ticks can be attributed.
-  const tokenToMarketId: Record<string, string> = {}
-  for (const m of poly) if (m.polyClobTokenIds?.[0]) tokenToMarketId[m.polyClobTokenIds[0]] = m.marketId
-
   const onTick = (t: MarketTick) => {
     void insertTicks([t]).catch(() => {})
     bus.emit('tick', t)
   }
 
-  if (Object.keys(tokenToMarketId).length > 0) {
-    new PolyWsClient({ tokenToMarketId, onTick }).start()
+  // Polymarket: REST poll the Gamma API. The WS market channel has price but no
+  // volume; the REST poll carries both, which the board ranks/displays by.
+  const pollPoly = async () => {
+    const ticks = await fetchPolyTicks({ limit: 80 }).catch(() => [])
+    if (ticks.length) {
+      await insertTicks(ticks).catch(() => {})
+      for (const t of ticks) bus.emit('tick', t)
+    }
   }
+  await pollPoly()
+  setInterval(() => void pollPoly(), config.KALSHI_POLL_MS * 3)
 
+  // Kalshi: REST poller.
   new KalshiPoller({ onTick, onMarkets: (metas) => void upsertMarkets(metas).catch(() => {}) }).start()
 
   await recomputeSignals().catch(() => {})
