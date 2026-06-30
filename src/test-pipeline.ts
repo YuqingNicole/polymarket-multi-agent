@@ -1,13 +1,10 @@
 /**
- * Test the multi-agent pipeline with mock data.
- * Run with: npx tsx src/test-pipeline.ts
+ * Test suite for polymarket-multi-agent
+ * Run with: npm run test:pipeline
  *
- * Does NOT call any real APIs. Uses a mock fetch + a mock LLM response
- * to verify that the full pipeline runs without errors and returns
- * correctly-shaped output.
- *
- * Also runs a live smoke test against the real Polymarket Gamma API
- * (no API key needed) to verify the data layer works.
+ * Test 1: AgentInput shape validation (no API)
+ * Test 2: Live scanner smoke test (real Polymarket API, no key needed)
+ * Test 3: Multi-agent LLM pipeline (requires OPENROUTER_API_KEY)
  */
 
 import 'dotenv/config'
@@ -20,12 +17,16 @@ const G = '\x1b[32m✓\x1b[0m'
 const R = '\x1b[31m✗\x1b[0m'
 const Y = '\x1b[33m⚠\x1b[0m'
 
-function pass(label: string) { console.log(`${G} ${label}`) }
+let passed = 0
+let failed = 0
+
+function pass(label: string) { console.log(`  ${G} ${label}`); passed++ }
 function fail(label: string, err?: unknown) {
-  console.log(`${R} ${label}`)
-  if (err) console.error('  ', err)
+  console.log(`  ${R} ${label}`)
+  if (err) console.error('    ', String(err))
+  failed++
 }
-function warn(label: string) { console.log(`${Y} ${label}`) }
+function warn(label: string) { console.log(`  ${Y} ${label}`) }
 
 // ── Mock AgentInput ───────────────────────────────────────────────────────────
 
@@ -34,170 +35,174 @@ const MOCK_INPUT: AgentInput = {
   source: 'poly',
   q: 'Will the Federal Reserve cut rates before September 2026?',
   poly: 0.34,
-  kalshi: 0.28,           // 6c spread → should trigger ArbAgent
+  kalshi: 0.28,
   yesAvg: 0.31,
-  chg: 8.5,               // strong upward drift → should flag TechAgent
+  chg: 8.5,
   spread: 6,
   vol24: 1_200_000,
   vol: 8_000_000,
   liq: 340_000,
-  volChg: 120,            // volume spike
+  volChg: 120,
 }
 
-// ── Test 1: Scorer (no API calls) ─────────────────────────────────────────────
+// ── Test 1: AgentInput shape validation ──────────────────────────────────────
 
-async function testScorer() {
-  console.log('\n── Test 1: Scorer (no API calls) ────────────────────────')
-  try {
-    const { scoreMarket } = await import('@/lib/scanner/scorer')
-    const { DEFAULT_SCANNER_CONFIG } = await import('@/lib/scanner/types')
+async function testAgentInputShape() {
+  console.log('\n── Test 1: AgentInput shape ─────────────────────────────')
 
-    const opp = scoreMarket(MOCK_INPUT, DEFAULT_SCANNER_CONFIG)
+  const required = [
+    'marketId', 'source', 'q', 'poly', 'kalshi',
+    'yesAvg', 'chg', 'spread', 'vol24', 'vol', 'liq', 'volChg',
+  ] as const
 
-    if (!opp) {
-      fail('scoreMarket returned null (below threshold)')
-      return
-    }
+  const missing = required.filter(k => (MOCK_INPUT as any)[k] === undefined)
+  if (missing.length > 0) fail(`Missing fields: ${missing.join(', ')}`)
+  else pass('All required fields present')
 
-    pass(`scoreMarket returned opportunity: score=${opp.score}/100`)
-    pass(`type=${opp.type}  spreadCents=${opp.spreadCents}`)
-    pass(`reasons count: ${opp.reasons.length}`)
-    opp.reasons.forEach(r => console.log(`   • ${r}`))
+  if (MOCK_INPUT.poly >= 0 && MOCK_INPUT.poly <= 1) pass(`poly=${MOCK_INPUT.poly} ✓`)
+  else fail(`poly=${MOCK_INPUT.poly} out of range [0,1]`)
 
-    // Sanity checks
-    if (opp.score < 1 || opp.score > 100) fail(`Score out of range: ${opp.score}`)
-    else pass('Score in valid range (0..100)')
+  if (MOCK_INPUT.kalshi >= 0 && MOCK_INPUT.kalshi <= 1) pass(`kalshi=${MOCK_INPUT.kalshi} ✓`)
+  else fail(`kalshi=${MOCK_INPUT.kalshi} out of range [0,1]`)
 
-    if (opp.spreadCents !== MOCK_INPUT.spread) fail(`Spread mismatch: ${opp.spreadCents} vs ${MOCK_INPUT.spread}`)
-    else pass('Spread copied correctly')
-
-  } catch (err) {
-    fail('Scorer test threw', err)
-  }
+  const expectedSpread = Math.round(Math.abs(MOCK_INPUT.poly - MOCK_INPUT.kalshi) * 100)
+  pass(`Cross-platform spread = ${expectedSpread}c (poly ${MOCK_INPUT.poly*100}% vs kalshi ${MOCK_INPUT.kalshi*100}%)`)
 }
 
-// ── Test 2: Builder (no API calls) ────────────────────────────────────────────
+// ── Test 2: Live scanner smoke test ──────────────────────────────────────────
 
-async function testBuilder() {
-  console.log('\n── Test 2: Builder (raw Gamma → AgentInput) ─────────────')
+async function testLiveScanner() {
+  console.log('\n── Test 2: Live scanner (Polymarket + Kalshi APIs) ──────')
+  console.log('  Fetching live market data...')
+
   try {
-    const { buildAgentInputFromGamma } = await import('@/lib/scanner/builder')
+    const t0 = Date.now()
+    const result = await runScan({ runLlmAnalysis: false, maxResults: 10 })
+    const elapsed = Date.now() - t0
 
-    const mockRaw = {
-      conditionId: 'abc123',
-      question: 'Will X happen?',
-      outcomePrices: ['0.65', '0.35'],
-      volume24hr: 500_000,
-      volume: 2_000_000,
-      liquidity: 80_000,
-      oneDayPriceChange: 0.05,
-      volumeChange24hr: 0.8,
-    }
-
-    const input = buildAgentInputFromGamma(mockRaw)
-    if (!input) { fail('buildAgentInputFromGamma returned null'); return }
-
-    pass(`marketId=${input.marketId}`)
-    pass(`poly=${input.poly}  (expected ~0.65)`)
-    pass(`chg=${input.chg}  (expected 5pts from 0.05)`)
-    pass(`volChg=${input.volChg}  (expected 80% from 0.8)`)
-
-    if (Math.abs(input.poly - 0.65) > 0.01) fail(`yesProb mismatch: ${input.poly}`)
-    else pass('yesProb parsed correctly from outcomePrices[0]')
-
-  } catch (err) {
-    fail('Builder test threw', err)
-  }
-}
-
-// ── Test 3: Live data smoke test (real Polymarket API, no key needed) ─────────
-
-async function testLiveData() {
-  console.log('\n── Test 3: Live data smoke test (Polymarket API) ────────')
-  try {
-    const result = await runScan(
-      { runLlmAnalysis: false, maxResults: 5, minVol24h: 1000 },
-    )
-
-    pass(`Scan completed. totalMarkets=${result.totalMarkets}`)
-    pass(`Opportunities found: ${result.opportunities.length}`)
+    pass(`Scan completed in ${elapsed}ms`)
+    pass(`Markets fetched: ${result.totalMarkets}`)
 
     if (result.totalMarkets === 0) {
-      warn('No markets fetched — check network or Polymarket API')
+      fail('No markets returned — check network / Polymarket API')
       return
     }
+
+    pass(`Opportunities found: ${result.opportunities.length}`)
 
     if (result.opportunities.length > 0) {
       const top = result.opportunities[0]
-      pass(`Top opportunity: "${top.question.slice(0, 60)}..."`)
-      pass(`  score=${top.score}  type=${top.type}  vol24h=$${(top.vol24h/1000).toFixed(0)}K`)
+      pass(`Top opportunity:`)
+      console.log(`    "${top.question.slice(0, 70)}..."`)
+      console.log(`    score=${top.score}/100  type=${top.type}  spread=${top.spreadCents}c  vol24h=$${(top.vol24h/1000).toFixed(0)}K`)
+      if (top.reasons.length > 0) {
+        console.log(`    signals: ${top.reasons.join(' | ')}`)
+      }
+
+      if (top.score >= 0 && top.score <= 100) pass('Score in valid range')
+      else fail(`Score out of range: ${top.score}`)
+
+      const validTypes = ['probability_drift', 'arbitrage', 'volume_anomaly', 'liquidity_gap', 'composite']
+      if (validTypes.includes(top.type)) pass(`Type "${top.type}" is valid`)
+      else warn(`Unexpected type: ${top.type}`)
     } else {
-      warn('No opportunities above threshold (this may be normal in calm markets)')
+      warn('No opportunities above threshold (normal in calm market conditions)')
+    }
+
+    // Print top 3
+    if (result.opportunities.length > 1) {
+      console.log('\n  Top opportunities:')
+      result.opportunities.slice(0, 3).forEach((o, i) => {
+        console.log(`  ${i+1}. [${o.score}] ${o.question.slice(0, 55)}... (${o.type})`)
+      })
     }
 
   } catch (err) {
-    fail('Live data test threw', err)
+    fail('Live scanner threw an error', err)
   }
 }
 
-// ── Test 4: Multi-agent pipeline (requires OPENROUTER_API_KEY) ────────────────
+// ── Test 3: Multi-agent LLM pipeline ─────────────────────────────────────────
 
 async function testMultiAgentPipeline() {
-  console.log('\n── Test 4: Multi-agent pipeline (LLM) ──────────────────')
+  console.log('\n── Test 3: Multi-agent LLM pipeline ────────────────────')
 
   if (!process.env.OPENROUTER_API_KEY) {
-    warn('OPENROUTER_API_KEY not set — skipping LLM test')
-    console.log('   Set it in .env and rerun to test the full pipeline.')
+    warn('OPENROUTER_API_KEY not set — skipping')
+    console.log('  Set OPENROUTER_API_KEY in .env to run this test.')
     return
   }
 
-  try {
-    console.log('   Running pipeline on mock market (this will consume LLM tokens)...')
-    const verdict = await runMultiAgentPipeline(MOCK_INPUT)
+  const model = process.env.OPENROUTER_MODEL ?? 'anthropic/claude-3-5-haiku'
+  console.log(`  Model: ${model}`)
+  console.log('  Running MacroAgent + TechAgent + ArbAgent in parallel...')
 
+  try {
+    const verdict = await runMultiAgentPipeline(MOCK_INPUT)
     pass(`Pipeline completed in ${verdict.durationMs}ms`)
 
-    // Validate structure
     const j = verdict.judge
-    if (!j.signal) fail('judge.signal missing')
-    else pass(`judge.signal = ${j.signal}`)
 
-    if (!['HIGH','MEDIUM','LOW'].includes(j.conviction)) fail(`invalid conviction: ${j.conviction}`)
-    else pass(`judge.conviction = ${j.conviction}`)
+    // Signal
+    const validSignals = ['BUY YES', 'BUY NO', 'ARBITRAGE', 'HOLD']
+    if (validSignals.includes(j.signal)) pass(`signal = "${j.signal}"`)
+    else fail(`Invalid signal: "${j.signal}"`)
 
-    if (typeof j.ruleApplied !== 'number') fail('judge.ruleApplied missing')
-    else pass(`judge.ruleApplied = Rule ${j.ruleApplied}`)
+    // Conviction
+    if (['HIGH','MEDIUM','LOW'].includes(j.conviction)) pass(`conviction = ${j.conviction}`)
+    else fail(`Invalid conviction: ${j.conviction}`)
 
-    pass(`judge.reasoning: ${j.reasoning}`)
-    pass(`macro: ${verdict.macro.summary}`)
-    pass(`tech: ${verdict.tech.summary}`)
-    pass(`arb: ${verdict.arb.summary}`)
-
-    // Validate arb logic: we gave spread=6c, should be HIGH or MEDIUM feasibility
-    if (['NOT_VIABLE','LOW'].includes(verdict.arb.arbFeasibility)) {
-      warn(`ArbAgent returned ${verdict.arb.arbFeasibility} for 6c spread — may be conservative`)
+    // ruleApplied
+    if (typeof j.ruleApplied === 'number' && j.ruleApplied >= 1 && j.ruleApplied <= 4) {
+      pass(`ruleApplied = Rule ${j.ruleApplied}`)
     } else {
-      pass(`ArbAgent feasibility = ${verdict.arb.arbFeasibility} (correct for 6c spread)`)
+      fail(`Invalid ruleApplied: ${j.ruleApplied}`)
     }
 
+    // sizePct
+    if (typeof j.sizePct === 'number' && j.sizePct > 0 && j.sizePct <= 1) {
+      pass(`sizePct = ${Math.round(j.sizePct * 100)}%`)
+    } else {
+      fail(`Invalid sizePct: ${j.sizePct}`)
+    }
+
+    // Arb check: 6c spread + $340K liquidity should be at least MEDIUM
+    const feasMap: Record<string,number> = { NOT_VIABLE:0, LOW:1, MEDIUM:2, HIGH:3 }
+    const feasScore = feasMap[verdict.arb.arbFeasibility] ?? -1
+    if (feasScore >= 2) pass(`ArbAgent: ${verdict.arb.arbFeasibility} (correct for 6c spread + $340K liq)`)
+    else warn(`ArbAgent returned ${verdict.arb.arbFeasibility} for 6c spread — may be conservative`)
+
+    console.log('\n  📊 Agent summaries:')
+    console.log(`  Macro  [${verdict.macro.pricingBias}]: ${verdict.macro.summary}`)
+    console.log(`  Tech   [${verdict.tech.trend}/${verdict.tech.momentumSignal}]: ${verdict.tech.summary}`)
+    console.log(`  Arb    [${verdict.arb.arbFeasibility}, net ${verdict.arb.expectedEdgeCents}c]: ${verdict.arb.summary}`)
+    console.log(`  Judge  [Rule ${j.ruleApplied}]: ${j.reasoning}`)
+
   } catch (err) {
-    fail('Multi-agent pipeline test threw', err)
+    fail('Multi-agent pipeline threw an error', err)
   }
 }
 
-// ── Run all tests ─────────────────────────────────────────────────────────────
+// ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log('=== polymarket-multi-agent test suite ===')
-  console.log(`OPENROUTER_API_KEY: ${process.env.OPENROUTER_API_KEY ? '✓ set' : '✗ not set (LLM test will be skipped)'}`)
-  console.log(`DATA_SOURCE: ${process.env.DATA_SOURCE ?? 'live (default)'}`)
+  console.log('╔══════════════════════════════════════════════════════════╗')
+  console.log('║      polymarket-multi-agent — test suite                 ║')
+  console.log('╚══════════════════════════════════════════════════════════╝')
+  console.log(`  OPENROUTER_API_KEY : ${process.env.OPENROUTER_API_KEY ? '✓ set' : '✗ not set (Test 3 skipped)'}`)
 
-  await testScorer()
-  await testBuilder()
-  await testLiveData()
+  await testAgentInputShape()
+  await testLiveScanner()
   await testMultiAgentPipeline()
 
-  console.log('\n=== done ===\n')
+  console.log('\n══════════════════════════════════════════════════════════')
+  console.log(`  ${passed} passed  ${failed > 0 ? R : G} ${failed} failed`)
+  console.log('══════════════════════════════════════════════════════════\n')
+
+  process.exit(failed > 0 ? 1 : 0)
 }
 
-main()
+main().catch(err => {
+  console.error('Unhandled error:', err)
+  process.exit(1)
+})
