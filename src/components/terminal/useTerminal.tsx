@@ -125,6 +125,19 @@ function rangeStyle(active: boolean) {
   return `font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 4px 9px; border-radius: 5px; cursor: pointer; border: none; background: ${active ? 'var(--border2)' : 'transparent'}; color: ${active ? 'var(--text-hi)' : 'var(--text-low)'};`
 }
 
+const THEME_KEY = 'augur-theme'
+
+// Read the persisted theme (client only); defaults to dark.
+function initialTheme(): TermState['theme'] {
+  if (typeof window === 'undefined') return 'dark'
+  try {
+    const t = localStorage.getItem(THEME_KEY)
+    return t === 'light' || t === 'dark' ? t : 'dark'
+  } catch {
+    return 'dark'
+  }
+}
+
 const INITIAL: TermState = {
   screen: 'dashboard',
   layout: 'A',
@@ -139,7 +152,7 @@ const INITIAL: TermState = {
 }
 
 export function useTerminal(): Scope {
-  const [st, setSt] = useState<TermState>(INITIAL)
+  const [st, setSt] = useState<TermState>(() => ({ ...INITIAL, theme: initialTheme() }))
   // First-paint fallback so the UI renders before the API responds (and if the
   // backend is unreachable). Once /api/markets resolves, the live data wins.
   const fallbackRef = useRef<MarketView[]>(
@@ -156,6 +169,11 @@ export function useTerminal(): Scope {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', st.theme)
+    try {
+      localStorage.setItem(THEME_KEY, st.theme)
+    } catch {
+      /* ignore (private mode) */
+    }
   }, [st.theme])
   useEffect(() => () => timersRef.current.forEach(clearTimeout), [])
 
