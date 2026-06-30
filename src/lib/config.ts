@@ -12,10 +12,11 @@ const schema = z.object({
   KALSHI_API_URL: z.string().default('https://external-api.kalshi.com/trade-api/v2'),
 
   AGENT_ENGINE: z.enum(['deterministic', 'llm']).default('deterministic'),
-  OPENROUTER_API_KEY: z.string().default(''),
-  OPENROUTER_BASE_URL: z.string().default('https://openrouter.ai/api/v1'),
-  LLM_MODEL_PRIMARY: z.string().default('deepseek/deepseek-v4-flash'),
-  LLM_MODEL_FALLBACK: z.string().default('google/gemini-3.5-flash'),
+  // DeepSeek official API (OpenAI-compatible)
+  DEEPSEEK_API_KEY: z.string().default(''),
+  DEEPSEEK_BASE_URL: z.string().default('https://api.deepseek.com'),
+  DEEPSEEK_MODEL: z.string().default('deepseek-chat'),
+  DEEPSEEK_MODEL_FALLBACK: z.string().default(''),
 })
 
 export const config = schema.parse(process.env)

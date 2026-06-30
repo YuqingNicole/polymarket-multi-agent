@@ -4,7 +4,7 @@
 [TradingAgents](https://github.com/tauricresearch/tradingagents) 的多智能体思路,并 100% 复刻
 `docs/prototype/Augur-Terminal.html` 的 Bloomberg 风格终端 UI。
 
-全 TypeScript / Next.js(App Router)全栈;数据落 Postgres 时序库;模型调用经 OpenRouter。
+全 TypeScript / Next.js(App Router)全栈;数据落 Postgres 时序库;模型调用直连 DeepSeek 官方 API。
 
 ---
 
@@ -16,7 +16,7 @@
 | 持久化 | Postgres(Prisma):`markets` / `ticks`(时序)/ `signals` / `market_pairs` / `agent_runs` |
 | 分析框架 | 标的筛选(Screener)、概率追踪(ProbTracker)、异常信号(套利价差 / 概率跳动 / 成交放量) |
 | 跨平台配对 | 人工策展种子表 + 标题相似度预筛 + LLM 语义判定 |
-| Agent 判断层 | 多 Agent 流水线:分析师 → 多空辩论 → 交易员 → 风控;确定性引擎 + LLM 引擎(OpenRouter) |
+| Agent 判断层 | 多 Agent 流水线:分析师 → 多空辩论 → 交易员 → 风控;确定性引擎 + LLM 引擎(DeepSeek) |
 | 终端 UI | 复刻原型:市场总览 / 标的详情 / Agent 分析 / 异常信号四屏 + 深浅色主题 |
 
 ---
@@ -33,7 +33,7 @@ npm install
 docker compose up -d            # 或 npm 的等价命令
 
 # 3. 配置环境
-cp .env.example .env            # 按需填入 OPENROUTER_API_KEY
+cp .env.example .env            # 按需填入 DEEPSEEK_API_KEY
 
 # 4. 建表 + 灌入演示数据
 npm run db:push
@@ -53,9 +53,9 @@ Polymarket / Kalshi 行情。
 |---|---|---|
 | `DATA_SOURCE` | `seed` | `seed`(离线演示)/ `live`(真实行情) |
 | `AGENT_ENGINE` | `deterministic` | `deterministic`(零成本可复现)/ `llm`(真实多 Agent) |
-| `OPENROUTER_API_KEY` | — | OpenRouter 密钥(`llm` 引擎与配对器需要) |
-| `LLM_MODEL_PRIMARY` | `deepseek/deepseek-v4-flash` | 主模型 |
-| `LLM_MODEL_FALLBACK` | `google/gemini-3.5-flash` | 主模型失败时自动兜底 |
+| `DEEPSEEK_API_KEY` | — | DeepSeek 官方密钥(`llm` 引擎与配对器需要) |
+| `DEEPSEEK_MODEL` | `deepseek-chat` | 主模型 |
+| `DEEPSEEK_MODEL_FALLBACK` | (空) | 可选兜底模型;留空则失败回退确定性引擎 |
 
 ---
 
@@ -167,7 +167,7 @@ interface AgentVerdict {               // Agent 结构化判断(含展示字段)
 流水线:**分析师 → 多空辩论(Bull/Bear)→ 交易员 → 风控**,输出结构化 `AgentVerdict`。
 
 - **deterministic 引擎**:原型决策树的逐字移植,无需联网、完全可复现,作为基线与离线兜底。
-- **llm 引擎**:经 OpenRouter 真实调用(分析师一段、交易员/风控一段),JSON 结构化输出 + zod 校验,
+- **llm 引擎**:直连 DeepSeek 官方 API(分析师一段、交易员/风控一段),JSON 结构化输出 + zod 校验,
   主模型失败自动切兜底模型;任何失败都回退到 deterministic 结果,产品永不硬失败。
 
 判断原则(两引擎一致):价差 ≥ 4¢ 优先套利对冲;24h 上行 ≥ 5pts 且概率 < 70% 倾向买入 YES;
@@ -212,7 +212,7 @@ interface AgentVerdict {               // Agent 结构化判断(含展示字段)
 }
 ```
 
-`AGENT_ENGINE=llm` 时同一标的由 DeepSeek V4 flash 经 OpenRouter 生成更丰富的中文论证(结构相同)。
+`AGENT_ENGINE=llm` 时同一标的由 DeepSeek(`deepseek-chat`)生成更丰富的中文论证(结构相同)。
 
 ---
 

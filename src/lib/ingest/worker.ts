@@ -29,7 +29,7 @@ async function ensureSeeded(): Promise<void> {
 // when an OpenRouter key is configured, otherwise title-similarity only.
 async function runMatching(poly: MarketMeta[], kalshi: MarketMeta[]): Promise<void> {
   if (poly.length === 0 || kalshi.length === 0) return
-  const useLlm = config.OPENROUTER_API_KEY !== ''
+  const useLlm = config.DEEPSEEK_API_KEY !== ''
   const pairs = await matchMarkets(poly, kalshi, { useLlm, acceptThreshold: 0.6 }).catch(() => [])
   if (pairs.length) await upsertPairs(pairs)
   console.log(`[ingest] matching: ${pairs.length} cross-platform pairs (${poly.length} poly × ${kalshi.length} kalshi)`)
