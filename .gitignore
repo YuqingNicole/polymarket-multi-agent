@@ -21,3 +21,4 @@ build/
 
 # Prisma
 prisma/*.db
+tsconfig.tsbuildinfo
