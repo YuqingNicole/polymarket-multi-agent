@@ -17,6 +17,21 @@ export default function Terminal() {
       <Dc markup={TERMINAL_MARKUP} scope={scope} />
       <footer className="augur-footer">
         <div className="grp">
+          {scope.dataMode === 'live' ? (
+            <span
+              className="augur-mode"
+              style={{ color: 'var(--up)', background: 'var(--tint-green)', borderColor: 'var(--up)' }}
+            >
+              ● LIVE 真实行情
+            </span>
+          ) : (
+            <span
+              className="augur-mode"
+              style={{ color: 'var(--amber)', background: 'var(--tint-amber)', borderColor: 'var(--amber)' }}
+            >
+              ● DEMO 演示数据
+            </span>
+          )}
           <span className="it"><span className="d" style={{ background: 'var(--up)' }} />Polymarket</span>
           <span className="it"><span className="d" style={{ background: 'var(--up)' }} />Kalshi</span>
           <span className="it"><span className="d" style={{ background: 'var(--accent)' }} />Agent · DeepSeek</span>

@@ -57,6 +57,14 @@
   border-radius: 50%;
   flex-shrink: 0;
 }
+.augur-footer .augur-mode {
+  font-weight: 600;
+  letter-spacing: .3px;
+  padding: 2px 8px;
+  border-radius: 5px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
 .augur-footer .sep {
   color: var(--text-faint);
 }

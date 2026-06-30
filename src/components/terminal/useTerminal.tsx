@@ -14,7 +14,7 @@ import type { AgentInput } from '@/lib/agents/input'
 import type { AgentVerdict } from '@/lib/types'
 import type { MarketView } from '@/lib/board'
 import type { Scope } from './Dc'
-import { fetchMarkets, runAgentApi, subscribeStream } from './api'
+import { fetchMarkets, runAgentApi, subscribeStream, type DataMode } from './api'
 
 // Faithful React port of the prototype's Component (renderVals + state +
 // charts + handlers). Produces the scope the Dc renderer binds the original
@@ -130,6 +130,7 @@ export function useTerminal(): Scope {
     buildPrototypeMarkets().map((m) => ({ ...m, polyMarketId: `poly-${m.id}`, source: 'poly' as const })),
   )
   const [apiMarkets, setApiMarkets] = useState<MarketView[] | null>(null)
+  const [mode, setMode] = useState<DataMode>('seed')
   const [verdict, setVerdict] = useState<{ id: string; v: AgentVerdict } | null>(null)
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const data = { markets: apiMarkets && apiMarkets.length ? apiMarkets : fallbackRef.current }
@@ -151,7 +152,10 @@ export function useTerminal(): Scope {
   // Pull live data from the backend and refresh on SSE tick/signal events.
   useEffect(() => {
     let alive = true
-    const load = () => fetchMarkets().then((m) => { if (alive) setApiMarkets(m) }).catch(() => {})
+    const load = () =>
+      fetchMarkets()
+        .then(({ markets, mode: mo }) => { if (alive) { setApiMarkets(markets); setMode(mo) } })
+        .catch(() => {})
     load()
     const unsub = subscribeStream(load)
     return () => { alive = false; unsub() }
@@ -369,6 +373,7 @@ export function useTerminal(): Scope {
   ]
 
   return {
+    dataMode: mode,
     theme: st.theme,
     toggleTheme: () => set((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
     themeIcon: st.theme === 'dark' ? '☀' : '☾',

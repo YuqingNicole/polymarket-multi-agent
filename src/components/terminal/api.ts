@@ -4,11 +4,13 @@ import type { MarketView } from '@/lib/board'
 
 // Client-side access to the product backend.
 
-export async function fetchMarkets(): Promise<MarketView[]> {
+export type DataMode = 'seed' | 'live'
+
+export async function fetchMarkets(): Promise<{ markets: MarketView[]; mode: DataMode }> {
   const r = await fetch('/api/markets', { cache: 'no-store' })
   if (!r.ok) throw new Error(`markets ${r.status}`)
-  const j = (await r.json()) as { markets: MarketView[] }
-  return j.markets
+  const j = (await r.json()) as { markets: MarketView[]; mode?: DataMode }
+  return { markets: j.markets, mode: j.mode ?? 'seed' }
 }
 
 export async function runAgentApi(source: Source, marketId: string): Promise<AgentVerdict> {
