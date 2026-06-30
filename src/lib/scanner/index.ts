@@ -149,11 +149,12 @@ export class ArbitrageScanner {
               liq: opp.liq,
               volChg: opp.volChg24h,
             }
-            const result = await runPipeline(agentInput)
+            const result = await runMultiAgentPipeline(agentInput)
             ;(opp as any).llmAnalysis = result
-            const sig = (result as any)?.signal?.signalEn ?? 'N/A'
+            const sig = result.judge?.signal ?? 'N/A'
+            const conviction = result.judge?.conviction ?? ''
             console.log(
-              `[scanner] LLM done for "${opp.question.slice(0, 55)}...": ${sig}`,
+              `[scanner] Multi-agent done for "${opp.question.slice(0, 50)}...": ${sig} (${conviction})`,
             )
           } catch (err) {
             console.warn(`[scanner] LLM analysis failed for ${opp.marketId}:`, err)

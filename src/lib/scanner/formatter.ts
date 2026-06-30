@@ -39,12 +39,18 @@ export function printScanResult(result: ScanResult): void {
       opp.reasons.forEach((r) => console.log(`   • ${r}`))
     }
     const analysis = (opp as any).llmAnalysis
-    if (analysis) {
+    if (analysis?.judge) {
+      const j = analysis.judge
+      console.log(
+        ` ┌─ 裁判裁决: ${j.signal}  置信度: ${j.conviction}  共识: ${j.consensusLevel}`,
+      )
+      console.log(` │  主导 Agent: ${j.dominantAgent}  建议仓位: ${Math.round(j.sizePct * 100)}%`)
+      console.log(` │  理由: ${j.reasoning}`)
+      if (analysis.macro?.summary) console.log(` │  宏观: ${analysis.macro.summary}`)
+      if (analysis.tech?.summary) console.log(` │  技术: ${analysis.tech.summary}`)
+      if (analysis.arb?.summary) console.log(` └─ 套利: ${analysis.arb.summary}`)
+    } else if (analysis) {
       console.log(` LLM Decision: ${analysis.decision ?? '—'}`)
-      if (analysis.summary) {
-        const lines = String(analysis.summary).split('\n').slice(0, 3)
-        lines.forEach((l: string) => console.log(`   ${l}`))
-      }
     }
   })
 
