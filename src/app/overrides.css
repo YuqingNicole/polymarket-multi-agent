@@ -1,0 +1,17 @@
+/* Layout fixes layered on top of the verbatim prototype CSS (globals.css).
+   Kept separate so re-running docs/prototype/build-ui-assets.mjs never clobbers them. */
+
+/* The prototype root is a height:100vh grid; its single auto row grows with
+   content, so the inner overflow:auto pane never gets a bounded height and
+   tall screens (异常信号 / Agent 分析) get clipped under body{overflow:hidden}.
+   Cap the row to the viewport and let the grid item shrink so the inner pane
+   scrolls. Visuals are unchanged for short screens. */
+.augur-shell {
+  height: 100vh;
+}
+.augur-shell > div {
+  grid-template-rows: minmax(0, 1fr);
+}
+.augur-shell main {
+  min-height: 0;
+}

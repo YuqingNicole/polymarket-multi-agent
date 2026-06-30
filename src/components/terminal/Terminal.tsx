@@ -12,5 +12,9 @@ export default function Terminal() {
   useEffect(() => setMounted(true), [])
   const scope = useTerminal()
   if (!mounted) return null
-  return <Dc markup={TERMINAL_MARKUP} scope={scope} />
+  return (
+    <div className="augur-shell">
+      <Dc markup={TERMINAL_MARKUP} scope={scope} />
+    </div>
+  )
 }
