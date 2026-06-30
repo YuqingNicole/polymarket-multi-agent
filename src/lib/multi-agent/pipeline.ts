@@ -26,7 +26,8 @@ export interface MacroReport {
   baseRate: number
   fairValue: number
   pricingBias: 'OVERPRICED' | 'UNDERPRICED' | 'FAIR'
-  keyFactors: string[]
+  bullFactors: string[]
+  bearFactors: string[]
   confidence: number
   summary: string
 }
@@ -35,6 +36,7 @@ export interface TechReport {
   trend: 'UPTREND' | 'DOWNTREND' | 'SIDEWAYS' | 'REVERSAL'
   momentumSignal: 'STRONG_BULL' | 'WEAK_BULL' | 'NEUTRAL' | 'WEAK_BEAR' | 'STRONG_BEAR'
   volumeSignal: 'VOLUME_SURGE' | 'VOLUME_DRY' | 'NORMAL'
+  trendAcceleration: 'ACCELERATING' | 'DECELERATING' | 'STEADY'
   targetProb: number
   confidence: number
   summary: string
@@ -42,9 +44,11 @@ export interface TechReport {
 
 export interface ArbReport {
   arbFeasibility: 'HIGH' | 'MEDIUM' | 'LOW' | 'NOT_VIABLE'
+  grossSpreadCents: number
+  estimatedCostCents: number
   expectedEdgeCents: number
   liquidityRisk: 'LOW' | 'MEDIUM' | 'HIGH'
-  executionNotes: string
+  executionRisk: 'LOW' | 'MEDIUM' | 'HIGH'
   confidence: number
   summary: string
 }
@@ -54,6 +58,7 @@ export interface JudgeVerdict {
   conviction: 'HIGH' | 'MEDIUM' | 'LOW'
   consensusLevel: 'UNANIMOUS' | 'MAJORITY' | 'SPLIT'
   dominantAgent: 'macro' | 'tech' | 'arb' | 'balanced'
+  ruleApplied: number
   reasoning: string
   sizePct: number
 }
@@ -167,12 +172,12 @@ export async function runMultiAgentPipeline(
 // ── Deterministic fallback reports ───────────────────────────────────────────
 
 function defaultMacro(input: AgentInput): MacroReport {
-  const fairValue = input.yesAvg
   return {
     baseRate: 0.5,
-    fairValue,
+    fairValue: input.yesAvg,
     pricingBias: 'FAIR',
-    keyFactors: ['LLM 调用失败，无法分析'],
+    bullFactors: ['LLM 调用失败，无法分析'],
+    bearFactors: ['LLM 调用失败，无法分析'],
     confidence: 0,
     summary: 'MacroAgent 调用失败，使用默认值',
   }
@@ -183,6 +188,7 @@ function defaultTech(input: AgentInput): TechReport {
     trend: input.chg > 3 ? 'UPTREND' : input.chg < -3 ? 'DOWNTREND' : 'SIDEWAYS',
     momentumSignal: input.chg > 5 ? 'WEAK_BULL' : input.chg < -5 ? 'WEAK_BEAR' : 'NEUTRAL',
     volumeSignal: input.volChg > 50 ? 'VOLUME_SURGE' : 'NORMAL',
+    trendAcceleration: 'STEADY',
     targetProb: input.yesAvg,
     confidence: 0,
     summary: 'TechAgent 调用失败，使用规则推断',
@@ -192,9 +198,11 @@ function defaultTech(input: AgentInput): TechReport {
 function defaultArb(input: AgentInput): ArbReport {
   return {
     arbFeasibility: input.spread >= 5 ? 'MEDIUM' : 'NOT_VIABLE',
-    expectedEdgeCents: Math.max(0, input.spread - 2),
+    grossSpreadCents: input.spread,
+    estimatedCostCents: 2,
+    expectedEdgeCents: Math.max(-99, input.spread - 2),
     liquidityRisk: input.liq < 10_000 ? 'HIGH' : input.liq < 100_000 ? 'MEDIUM' : 'LOW',
-    executionNotes: 'ArbAgent 调用失败，使用规则推断',
+    executionRisk: 'MEDIUM',
     confidence: 0,
     summary: 'ArbAgent 调用失败，使用规则推断',
   }

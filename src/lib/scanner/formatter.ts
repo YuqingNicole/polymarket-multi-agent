@@ -41,14 +41,20 @@ export function printScanResult(result: ScanResult): void {
     const analysis = (opp as any).llmAnalysis
     if (analysis?.judge) {
       const j = analysis.judge
+      const a = analysis.arb
+      const m = analysis.macro
+      const t = analysis.tech
       console.log(
-        ` ┌─ 裁判裁决: ${j.signal}  置信度: ${j.conviction}  共识: ${j.consensusLevel}`,
+        ` ┌─ 裁判裁决: ${j.signal}  置信度: ${j.conviction}  共识: ${j.consensusLevel}  规则${j.ruleApplied}`,
       )
-      console.log(` │  主导 Agent: ${j.dominantAgent}  建议仓位: ${Math.round(j.sizePct * 100)}%`)
+      console.log(` │  主导: ${j.dominantAgent}  建议仓位: ${Math.round(j.sizePct * 100)}%`)
       console.log(` │  理由: ${j.reasoning}`)
-      if (analysis.macro?.summary) console.log(` │  宏观: ${analysis.macro.summary}`)
-      if (analysis.tech?.summary) console.log(` │  技术: ${analysis.tech.summary}`)
-      if (analysis.arb?.summary) console.log(` └─ 套利: ${analysis.arb.summary}`)
+      if (m?.summary) console.log(` │  📊 宏观[${m.pricingBias}]: ${m.summary}`)
+      if (t?.summary) console.log(` │  📈 技术[${t.trend}/${t.momentumSignal}]: ${t.summary}`)
+      if (a?.summary) {
+        const edge = a.expectedEdgeCents != null ? ` 净${a.expectedEdgeCents}c` : ''
+        console.log(` └─ 🔀 套利[${a.arbFeasibility}${edge}]: ${a.summary}`)
+      }
     } else if (analysis) {
       console.log(` LLM Decision: ${analysis.decision ?? '—'}`)
     }
