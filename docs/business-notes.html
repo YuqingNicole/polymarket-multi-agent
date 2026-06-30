@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Augur Terminal · 业务实现研读笔记</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg0:#ECE7DA;--bg1:#F3EFE6;--bg2:#FBF9F3;--bg3:#EFEAE0;--bg4:#E4DECF;
+    --border:#DED7C8;--border-soft:#D6CFBE;--border2:#CDC5B3;--border3:#BCB2A0;
+    --text-hi:#211E18;--text-2:#4A4538;--text-3:#615A4C;--text-mid:#6E6757;--text-low:#857C6B;--text-low2:#968C7A;
+    --accent:#C2603C;--accent-hi:#D07A55;--up:#3F8A57;--down:#BC3B44;--amber:#937420;
+    --poly:#4660A6;--kalshi:#2E8273;--purple:#6E51A0;--risk:#AF6035;
+    --tint-clay:#F4E4DA;--tint-amber:#F1EAD3;--tint-teal:#DBEDE6;--tint-purple:#E9E2F2;--tint-blue:#DEE7F1;--tint-green:#DBEDDF;--tint-red:#F2DEDE;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg0);color:var(--text-hi);font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6;padding:0 0 60px}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px}
+
+  /* header */
+  header{border-bottom:1px solid var(--border);background:var(--bg1);padding:26px 0;margin-bottom:34px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:30px;height:30px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .logo i{width:11px;height:11px;border-radius:2px;background:var(--bg2);transform:rotate(45deg);display:block}
+  .brand h1{font-size:19px;font-weight:600;letter-spacing:-.3px}
+  .brand h1 b{color:var(--accent);font-weight:600}
+  .brand .sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-low);margin-top:3px;text-transform:uppercase}
+
+  /* toc */
+  .toc{background:var(--bg1);border:1px solid var(--border);border-radius:16px;padding:18px 22px;margin-bottom:40px}
+  .toc h4{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.8px;color:var(--text-low);text-transform:uppercase;margin-bottom:13px}
+  .toc ol{list-style:none;counter-reset:t;columns:2;column-gap:36px}
+  .toc li{counter-increment:t;margin:7px 0;break-inside:avoid}
+  .toc a{color:var(--text-2);text-decoration:none;font-size:13px}
+  .toc a::before{content:counter(t,decimal-leading-zero);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);margin-right:10px}
+  .toc a:hover{color:var(--accent)}
+
+  /* section */
+  section{margin-bottom:46px;scroll-margin-top:18px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+  .sec-head h2{font-size:17px;font-weight:600;letter-spacing:-.2px}
+  .sec-head .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.6px;color:var(--accent);background:var(--tint-clay);border:1px solid var(--border);padding:2px 8px;border-radius:6px;text-transform:uppercase}
+  .sec-desc{font-size:12.5px;color:var(--text-mid);margin-bottom:20px;max-width:820px}
+  .sec-desc strong{color:var(--text-hi);font-weight:600}
+
+  /* panel */
+  .diagram{background:var(--bg1);border:1px solid var(--border);border-radius:16px;padding:22px 24px 24px}
+
+  /* prose */
+  .diagram h3{font-size:13.5px;font-weight:600;color:var(--text-2);letter-spacing:-.1px;margin:22px 0 9px}
+  .diagram h3:first-child{margin-top:0}
+  .diagram p{font-size:12.5px;color:var(--text-3);margin:10px 0}
+  .diagram ul,.diagram ol{margin:10px 0;padding-left:20px}
+  .diagram li{font-size:12.5px;color:var(--text-3);margin:6px 0}
+  .diagram li::marker{color:var(--text-low2)}
+  strong{color:var(--text-hi);font-weight:600}
+  em{color:var(--accent);font-style:normal;font-weight:500}
+  .ref{font-size:11px;color:var(--text-low);font-style:italic}
+
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--bg3);color:var(--accent);padding:1px 6px;border-radius:5px;border:1px solid var(--border)}
+  .kbd{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);font-weight:500}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:12px}
+  th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  thead th{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--text-low);text-transform:uppercase;letter-spacing:.5px;font-weight:600;background:var(--bg3)}
+  tbody tr:last-child td{border-bottom:none}
+  td{color:var(--text-3)}
+  td code{white-space:nowrap}
+
+  /* ascii flow */
+  .flow{font-family:'IBM Plex Mono',monospace;font-size:11.5px;background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:16px 18px;margin:14px 0;color:var(--text-mid);overflow-x:auto;line-height:1.7}
+  .flow b{color:var(--accent);font-weight:600}
+
+  /* status boxes */
+  .box{background:var(--bg2);border:1px solid var(--border);border-left-width:3px;border-radius:11px;padding:14px 16px;margin:14px 0}
+  .box h4{font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+  .box ul{margin:6px 0 0}
+  .box p{margin:0}
+  .box.good{border-left-color:var(--up);background:linear-gradient(0deg,var(--bg2),var(--bg2)),var(--tint-green)}
+  .box.warn{border-left-color:var(--amber)}
+  .box.bad{border-left-color:var(--down)}
+  .box.good h4{color:var(--up)} .box.warn h4{color:var(--amber)} .box.bad h4{color:var(--down)}
+
+  /* inline pills */
+  .pill{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:1px 8px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);color:var(--text-mid);margin-right:5px;letter-spacing:.2px}
+  .pill.up{color:var(--up);border-color:#bcd9c4;background:var(--tint-green)}
+  .pill.down{color:var(--down);border-color:#e6c4c4;background:var(--tint-red)}
+  .pill.amber{color:var(--amber);border-color:#e0d2a8;background:var(--tint-amber)}
+  .pill.poly{color:var(--poly);border-color:#c2cfe6;background:var(--tint-blue)}
+
+  /* callout */
+  blockquote{margin:14px 0;padding:11px 16px;border-left:3px solid var(--accent);background:var(--tint-clay);border-radius:0 10px 10px 0}
+  blockquote p{margin:0;font-size:12px;color:var(--text-2)}
+
+  footer{color:var(--text-low);font-size:11px;font-family:'IBM Plex Mono',monospace;border-top:1px solid var(--border);padding-top:18px;margin-top:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  @media(max-width:680px){.toc ol{columns:1}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap brand">
+    <div class="logo"><i></i></div>
+    <div>
+      <h1>Augur<b>.</b>Terminal · 业务实现研读笔记</h1>
+      <div class="sub">Prediction Market Agent · Business Walkthrough &amp; Analysis</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <h4>目录 · Contents</h4>
+    <ol>
+      <li><a href="#s1">项目定位与主链路</a></li>
+      <li><a href="#s2">归一化:接入层的翻译墙</a></li>
+      <li><a href="#s3">seed vs live 双模式</a></li>
+      <li><a href="#s4">live 链路:抓取 → 配对 → 落表</a></li>
+      <li><a href="#s5">跨平台配对:实体对齐</a></li>
+      <li><a href="#s6">judgePair Prompt 稳定性</a></li>
+      <li><a href="#s7">分析框架:纯函数洞察层</a></li>
+      <li><a href="#s8">Agent 流水线:决策层</a></li>
+      <li><a href="#s9">关键问题与加固清单</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1 -->
+  <section id="s1">
+    <div class="sec-head"><h2>项目定位与主链路</h2><span class="tag">Overview</span></div>
+    <p class="sec-desc">聚合 Polymarket + Kalshi 两家预测市场,归一化后做跨平台配对,再用多 Agent 分析层产出交易判断,最后用复刻 Bloomberg 风格的终端 UI 呈现。<strong>仅只读公开行情,不下单。</strong></p>
+    <div class="diagram">
+      <div class="flow">
+[接入] Polymarket WS / Kalshi REST<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;↓ <b>normalize</b>(纯函数翻译)<br/>
+[持久化] Postgres&nbsp;&nbsp;markets · ticks(时序)· signals · market_pairs · agent_runs<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
+[配对] curated + Jaccard 预筛 + LLM 裁判 ──► market_pairs<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
+[洞察] ProbTracker · Screener · AnomalyDetector ──► signals<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
+[决策] Agent 流水线:分析师 → 多空辩论 → 交易员/风控 ──► AgentVerdict<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
+[体验] board 聚合(一事件一行)· SSE 实时推流 · 终端 UI
+      </div>
+      <p>全 TypeScript / Next.js(App Router)。<code>instrumentation.ts</code> 在服务启动时拉起常驻摄取服务,通过内存事件总线把更新经 SSE 推给前端。两个核心开关:<span class="kbd">DATA_SOURCE</span>(seed/live)与 <span class="kbd">AGENT_ENGINE</span>(deterministic/llm)。</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="s2">
+    <div class="sec-head"><h2>归一化:接入层的翻译墙</h2><span class="tag">Normalize</span></div>
+    <p class="sec-desc">核心就一个文件 <strong>connectors/normalize.ts</strong> —— 纯函数、零 I/O。把两家五花八门的原始 JSON,一次性压成统一领域类型 MarketMeta / MarketTick,下游不再关心数据来自哪家。</p>
+    <div class="diagram">
+      <h3>它消化的四类「脏」</h3>
+      <table>
+        <thead><tr><th>问题</th><th>表现</th><th>处理</th></tr></thead>
+        <tbody>
+          <tr><td>字段名不同</td><td>Poly <code>conditionId/question</code> vs Kalshi <code>ticker/title</code></td><td>查表搬运到统一字段</td></tr>
+          <tr><td>类型不干净</td><td>数组被当字符串返回、数字混字符串</td><td><code>parseMaybeJsonArray</code> / <code>toNumber</code></td></tr>
+          <tr><td>单位不一致</td><td>Kalshi 价格时而美分(0–100)时而美元(0–1)</td><td>启发式 <code>n &gt; 1.5 ? n/100 : n</code></td></tr>
+          <tr><td>YES 口径不同</td><td>Poly 取 <code>outcomePrices[0]</code>;Kalshi 取买卖中点</td><td>统一成 <code>yesProb</code> 0..1,<code>clampProb</code> 夹边界</td></tr>
+        </tbody>
+      </table>
+
+      <h3>YES 概率的口径统一(最关键)</h3>
+      <ul>
+        <li><strong>Polymarket</strong>:REST 直接取 <code>outcomePrices[0]</code>;实时 WS 从订单簿算 best bid/ask 中点。</li>
+        <li><strong>Kalshi</strong>:取 <code>(yes_bid + yes_ask)/2</code>,单边则用单边,都没有退回 <code>last_price</code>。</li>
+      </ul>
+      <blockquote><p>两边都收敛到「中点」口径,是后面「跨平台价差直接相减」能成立的前提。</p></blockquote>
+      <p class="ref">connector 负责取数 + 连接管理(WS 重连 / 轮询 429 退避);normalize 负责翻译。职责分离,所以归一化能用 __fixtures__ 真实样本纯函数单测。</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section id="s3">
+    <div class="sec-head"><h2>seed vs live 双模式</h2><span class="tag">Seed vs Live</span></div>
+    <p class="sec-desc">看板里那 8 个事件,是<strong>硬编码的 Demo 种子</strong>,不是抓取归一化后剩下的。</p>
+    <div class="diagram">
+      <ul>
+        <li><span class="pill amber">seed</span> 来自 <code>seed/prototype.ts</code> 的 <code>PROTOTYPE_BASE</code> —— 正好 8 条,逐字从原型 HTML 搬来,概率/成交全是写死常量。<code>getMarketViews()</code> 第一行就短路返回,事件一个不增减。作用:让整条链路<strong>离线、零依赖、可复现</strong>地端到端跑通,且与原型 UI 像素一致。</li>
+        <li><span class="pill up">live</span> 才真去抓:Poly/Kalshi 各拉若干 → 过滤 → 配对。<strong>列表行数 = 配对成功的事件对数</strong>,由「拉取量 × 配对成功率」决定,通常不等于 8。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section id="s4">
+    <div class="sec-head"><h2>live 链路:抓取 → 配对 → 落表</h2><span class="tag">Live Pipeline</span></div>
+    <p class="sec-desc">入口 <strong>instrumentation.ts</strong> → <code>startIngest()</code> → live 时进 <code>startLive()</code>(ingest/worker.ts)。</p>
+    <div class="diagram">
+      <ol>
+        <li><strong>并行抓取</strong>:Poly 按 24h 成交倒序拉流动性最好的;Kalshi <em>过量抓取</em>后滤掉多元市场(<code>KXMVE*</code>)、按成交排序取 top N。各自 <code>.catch(()=&gt;[])</code> 互不阻断。</li>
+        <li><strong>落市场表</strong>:<code>upsertMarkets</code> 按 <code>(source, marketId)</code> 幂等。</li>
+        <li><strong>跨平台配对</strong>:<code>runMatching</code> → <code>matchMarkets</code>,结果 <code>upsertPairs</code> 落 <code>market_pairs</code>。</li>
+        <li><strong>实时 tick 流</strong>:Poly WS(心跳+指数退避重连)与 Kalshi 轮询(4s,429 退避)统一回调 <code>onTick</code> → <code>insertTicks</code> 落 append-only 时序表 + <code>bus.emit</code>。</li>
+        <li><strong>周期重算</strong>:每 30s <code>recomputeSignals</code> 全表替换 <code>signals</code>,并刷新每对的 <code>mergedYesProb</code>。</li>
+        <li><strong>聚合出表</strong>:<code>GET /api/markets</code> → <code>getBoard()</code>,<code>for (p of pairs)</code> 一对一行。</li>
+      </ol>
+      <div class="box bad">
+        <h4>⚠ seed→live 第一个坑</h4>
+        <p><code>curated.ts</code> 的人工种子表在 live 下<strong>失效</strong>:它的 id 是合成的 <code>poly-&lt;id&gt;</code>/<code>kalshi-&lt;id&gt;</code>,和真实 <code>conditionId</code>/<code>ticker</code> 对不上。于是 live 配对 <strong>100% 依赖 LLM 裁判</strong>;没配 key 时只剩 Jaccard,极易全军覆没 → <code>market_pairs</code> 空 → 看板一行都没有。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section id="s5">
+    <div class="sec-head"><h2>跨平台配对:实体对齐</h2><span class="tag">Matching</span></div>
+    <p class="sec-desc">两家无公共标识,唯一桥是标题。这是经典的 Entity Resolution 难题,用「人工策展 → Jaccard 预筛 → LLM 裁判」三段式漏斗逼近。</p>
+    <div class="diagram">
+      <div class="flow">
+[① curated] 已知事件写死,confidence=1 ── 优先<br/>
+[② 预筛]&nbsp;&nbsp;Poly×Kalshi 笛卡尔积 → Jaccard 相似度(阈值松到 0.04)→ 降序候选<br/>
+[③ 裁判]&nbsp;&nbsp;LLM 逐对判 same?/confidence(上限 60 次)→ ≥0.6 接受 → 一对一贪心占用<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──► <b>market_pairs</b>
+      </div>
+      <p><strong>分工:</strong>预筛只负责「别漏」(召回)、不负责「判准」;LLM 负责「判准」(精度)。阈值压到 0.04 就是为了让「BTC $150k」vs「Bitcoin $150,000」这种同义改写也能漏进裁判。</p>
+
+      <h3>为什么 live 配对这么脆</h3>
+      <div class="box bad">
+        <h4>结构性脆点</h4>
+        <ul>
+          <li><strong>召回层太弱</strong>:Jaccard 是纯词形重叠,对「自然语言 vs 代码标题」「数值实体」无能为力,零重叠就<strong>彻底漏掉</strong>。</li>
+          <li><strong>curated 在 live 下是死的</strong>:本该最稳的一级失效,全部压力转嫁 LLM。</li>
+          <li><strong>截断 + 贪心</strong>:<code>maxJudgements=60</code> 可能让正确对没轮到就 <code>break</code>;一对一贪心不回溯,高相似但错误的对会「抢占」正确的对。</li>
+          <li><strong>降级即废</strong>:没 key 或 LLM 失败 → 退回纯 Jaccard。</li>
+        </ul>
+      </div>
+      <div class="box warn">
+        <h4>一脆就「整个看板崩」</h4>
+        <p><code>getBoard</code> 只遍历 pairs —— <strong>配对 0 对 → 列表 0 行</strong>,哪怕真实行情全在库里。套利信号(<code>detectSpread</code>)、<code>mergedYesProb</code> 也都只在 pair 上算。底层 <code>buildAgentInput</code> 其实<em>支持</em>「未配对单边展示」,但看板层没用上这个降级能力。</p>
+      </div>
+      <p class="ref">本质:把一个公认难题用「笛卡尔积 + Jaccard + LLM 单轮 + 贪心」一条脆链解决,又让产品主视图强依赖它的产出。任一环掉链 → 结果不是「少几行」而是「零行」。</p>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section id="s6">
+    <div class="sec-head"><h2>judgePair Prompt 稳定性</h2><span class="tag">Prompt</span></div>
+    <p class="sec-desc">结论:方向对(点到了「同一结果口径」),但作为生产级裁判偏薄 —— 它能稳定产出「格式正确的判断」,却产不出「可靠的判断」。</p>
+    <div class="diagram">
+      <div class="box good">
+        <h4>做对的</h4>
+        <ul>
+          <li>任务定义抓住要害:「同一结果口径」是配对真正的难点。</li>
+          <li>输出契约有护栏:强制 JSON + <code>response_format</code> + <code>extractJson</code> 容错 + zod 校验,格式层基本不崩。</li>
+        </ul>
+      </div>
+      <div class="box bad">
+        <h4>不够稳的(按严重度)</h4>
+        <ul>
+          <li><strong>口号无材料</strong>:嘴上要判结算口径,却<em>只喂两个标题</em>,<code>category</code>/<code>endDate</code> 一个没传。等于做缺条件的题。</li>
+          <li><strong>无 few-shot</strong>:宽松/严格的尺度全靠模型自由发挥,误配率不可控。</li>
+          <li><strong>confidence 语义未定义</strong>:却被当成 <code>≥0.6</code> 的硬阈值用,尺度还会漂移。</li>
+          <li><strong>temperature 0.4 偏高</strong>:分类任务理应趋近 0;随机性还被 upsert <em>固化进数据</em>。</li>
+          <li><strong>「重试」只换模型不纠错</strong>:仅异常触发,判错不会重判。</li>
+          <li><strong>缺「无法判断」出口</strong>:信息不足时被迫二选一,只能瞎猜。</li>
+        </ul>
+      </div>
+      <p class="ref">最贵的失败不是程序崩,而是「默默给出错误配对且高 confidence」—— 会被当真套利信号展示,还被缓存复用。低成本加固:喂 category/endDate、写清规则与 confidence 刻度、加 2–3 个 few-shot、显式 temperature 0、放开低 confidence。全在 prompt 层,不动流水线。</p>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section id="s7">
+    <div class="sec-head"><h2>分析框架:纯函数洞察层</h2><span class="tag">Analysis</span></div>
+    <p class="sec-desc">全是纯函数、零 I/O、可单测。把时序数据压成「信号 + 排序 + 一行快照」。<strong>工程最扎实的一层。</strong></p>
+    <div class="diagram">
+      <h3>ProbTracker — 计量基础</h3>
+      <p><code>probDelta(history, '1h'|'24h')</code> 锚定最新 tick、回看窗口内最早一条,算 <code>(last-first)×100</code> 得 pts;<code>volumeChangePct</code> 算成交百分比变化。<span class="ref">隐患:live tick 稀疏时窗口内找不到早点会返 0 → 信号「假性平静」。</span></p>
+
+      <h3>Screener — 标的优选</h3>
+      <table>
+        <thead><tr><th>维度</th><th>权重</th><th>含义</th></tr></thead>
+        <tbody>
+          <tr><td>24h 成交</td><td>0.35</td><td>流动性/热度</td></tr>
+          <tr><td>累计成交</td><td>0.25</td><td>流动性代理</td></tr>
+          <tr><td>距结算时间</td><td>0.20</td><td>越近越高</td></tr>
+          <tr><td>近期活跃 |Δ24h|</td><td>0.20</td><td>概率在动</td></tr>
+        </tbody>
+      </table>
+      <p>亮点 <code>saturate(v,scale)=v/(v+scale)</code> 边际递减归一化,把无界量稳健压到 0–1。<span class="ref">注:rankMarkets 已写好且测了,但主链路尚未接入。</span></p>
+
+      <h3>AnomalyDetector — 三类信号</h3>
+      <table>
+        <thead><tr><th>信号</th><th>触发</th><th>severity</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill up">prob_jump</span> 概率跳动</td><td>|Δ24h| ≥ 5 pts</td><td>min(1, |Δ|/15)</td></tr>
+          <tr><td><span class="pill amber">vol_spike</span> 成交放量</td><td>volChg ≥ 50%</td><td>min(1, pct/200)</td></tr>
+          <tr><td><span class="pill down">xplat_spread</span> 套利价差</td><td>|poly−kalshi| ≥ 4¢</td><td>min(1, ¢/15)</td></tr>
+        </tbody>
+      </table>
+      <p class="ref">套利信号死死绑在 pairs 上(脆点延伸)。口径瑕疵:prob_jump 文案写「2 小时内」,实算用 24h 窗口。</p>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section id="s8">
+    <div class="sec-head"><h2>Agent 流水线:决策层</h2><span class="tag">Agents</span></div>
+    <p class="sec-desc">镜像 TradingAgents:分析师 → 多空辩论 → 交易员/风控,产出结构化 AgentVerdict。双引擎共用 <strong>AgentInput</strong> 输入契约,可互换、可对比。</p>
+    <div class="diagram">
+      <table>
+        <thead><tr><th>引擎</th><th>实现</th><th>定位</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill">deterministic</span></td><td>原型决策树逐字移植,if-else 优先级 + 模板文案</td><td>离线零成本可复现;Demo 内容源 + LLM 兜底基线</td></tr>
+          <tr><td><span class="pill up">llm</span></td><td>两段式调用:分析师段 → 交易员/风控段,zod 校验</td><td>同一套规则下更丰富的中文论证</td></tr>
+        </tbody>
+      </table>
+      <h3>统一决策原则(写进 prompt,与决策树一字不差)</h3>
+      <div class="flow">
+价差 ≥ 4¢&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <b>套利对冲</b>&nbsp;&nbsp;conf .78<br/>
+24h↑ ≥ 5pts 且 &lt;70%&nbsp;→ <b>买入 YES</b>&nbsp;&nbsp;&nbsp;conf .64<br/>
+24h↓ ≥ 5pts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <b>买入 NO</b>&nbsp;&nbsp;&nbsp;&nbsp;conf .60<br/>
+概率 ≥ 78%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <b>观望</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;conf .52<br/>
+其它&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <b>观望</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;conf .48
+      </div>
+      <div class="box good">
+        <h4>容错三层 — 产品永不硬失败</h4>
+        <p>LLM 任何环节失败 → 回退确定性结果(但 <code>engine</code> 仍标 'llm');<code>chatJSON</code> 内部主模型 → 兜底模型重试;最外层确定性引擎兜底。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 -->
+  <section id="s9">
+    <div class="sec-head"><h2>关键问题与加固清单</h2><span class="tag">Issues</span></div>
+    <p class="sec-desc">把全程发现的脆点与取舍汇总,按性价比给加固方向。</p>
+    <div class="diagram">
+      <table>
+        <thead><tr><th>问题</th><th>影响</th><th>加固</th></tr></thead>
+        <tbody>
+          <tr><td>看板只遍历 pairs</td><td>配对 0 → 看板空白</td><td>未配对市场单边展示(底层已支持),最小改动见效最快</td></tr>
+          <tr><td>curated 在 live 失效</td><td>配对全压 LLM</td><td>填真实 <code>conditionId↔ticker</code>,确定性命中热门事件</td></tr>
+          <tr><td>Jaccard 召回弱</td><td>异构标题漏配</td><td>预筛叠加 category / endDate / 数值实体信号</td></tr>
+          <tr><td>judgePair prompt 偏薄</td><td>静默误配 + 高 confidence</td><td>喂上下文 + few-shot + temp 0 + confidence 刻度</td></tr>
+          <tr><td>maxJudgements=60 截断</td><td>正确对被截掉</td><td>按类别分桶后裁,或调高上限</td></tr>
+          <tr><td>决策逻辑重复三处</td><td>阈值改动易漂移</td><td>抽成单一 source of truth</td></tr>
+          <tr><td>LLM 仅软遵守规则</td><td>两引擎口径一致≠保证</td><td>事后校验 LLM 输出是否违反阈值</td></tr>
+          <tr><td>计量口径瑕疵</td><td>不确定性被「洗白」</td><td>对齐 prob_jump 文案与窗口;liq 改真实簿深</td></tr>
+        </tbody>
+      </table>
+      <blockquote>
+        <p><strong>总评:</strong>范式选型大多正确(漏斗式 hybrid matching、双引擎同规则、纯函数可测),工程质量上分析框架最扎实。最大的系统性风险集中在<strong>跨平台配对</strong>这一环:召回层与保底层在 live 下都偏弱,而产品主视图又强依赖它 —— 加固应优先投在「保底端(curated)」和「召回端(多信号预筛)」,而非 LLM 本身。</p>
+      </blockquote>
+    </div>
+  </section>
+
+  <footer>
+    <span>Augur Terminal · 业务实现研读笔记 · 整理于 2026-06-30</span>
+    <span>只读公开行情 · 非投资建议</span>
+  </footer>
+
+</div>
+
+</body>
+</html>

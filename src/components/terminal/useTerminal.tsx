@@ -31,6 +31,7 @@ interface TermState {
   agentStep: number
   agentRunning: boolean
   revealed: number
+  query: string
 }
 
 function protoToInput(m: PrototypeMarket): AgentInput {
@@ -120,6 +121,7 @@ const INITIAL: TermState = {
   agentStep: 6,
   agentRunning: false,
   revealed: 99,
+  query: '',
 }
 
 export function useTerminal(): Scope {
@@ -281,6 +283,12 @@ export function useTerminal(): Scope {
     const cats = catMap[st.filter] || []
     markets = allMarkets.filter((m) => cats.includes(m.cat))
   }
+  const q = st.query.trim().toLowerCase()
+  if (q) {
+    markets = markets.filter(
+      (m) => m.q.toLowerCase().includes(q) || (m.cat || '').toLowerCase().includes(q),
+    )
+  }
 
   const selBase = data.markets.find((m) => m.id === st.selectedId) ?? data.markets[0]
   const sel = marketView(selBase) as ReturnType<typeof marketView> & Record<string, unknown>
@@ -374,6 +382,11 @@ export function useTerminal(): Scope {
 
   return {
     dataMode: mode,
+    searchQuery: st.query,
+    onSearch: (val: string) => set({ query: val }),
+    onSearchEnter: (e: { key: string }) => {
+      if (e.key === 'Enter' && markets[0]) selectMarket(markets[0].id)
+    },
     theme: st.theme,
     toggleTheme: () => set((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
     themeIcon: st.theme === 'dark' ? '☀' : '☾',

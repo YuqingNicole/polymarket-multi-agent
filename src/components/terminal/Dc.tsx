@@ -174,6 +174,14 @@ function renderNode(node: ChildNode, scope: Scope): React.ReactNode {
     } else if (name === 'onclick') {
       const fn = interpolate(raw, scope)
       if (typeof fn === 'function') props.onClick = fn
+    } else if (name === 'oninput') {
+      const fn = interpolate(raw, scope)
+      if (typeof fn === 'function') {
+        props.onChange = (e: React.ChangeEvent<HTMLInputElement>) => (fn as (v: string) => void)(e.target.value)
+      }
+    } else if (name === 'onkeydown') {
+      const fn = interpolate(raw, scope)
+      if (typeof fn === 'function') props.onKeyDown = fn
     } else if (name === 'class') {
       props.className = interpolate(raw, scope)
     } else {

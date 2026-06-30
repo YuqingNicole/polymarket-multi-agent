@@ -21,6 +21,22 @@
   min-height: 0;
 }
 
+/* Header search input (replaces the prototype's static placeholder). */
+.augur-search {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 0;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 12px;
+  color: var(--text-2);
+}
+.augur-search::placeholder {
+  color: var(--text-low);
+}
+
 /* Footer / status bar — terminal style, theme-aware via the design tokens. */
 .augur-footer {
   flex: 0 0 auto;
